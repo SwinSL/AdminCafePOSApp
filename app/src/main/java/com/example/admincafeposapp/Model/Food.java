@@ -1,35 +1,35 @@
 package com.example.admincafeposapp.Model;
 
 public class Food {
-    private String name;
-    private double price;
+    private String item_name;
+    private double item_price;
 
     public Food()
     {}
 
     public Food(String name, double price)
     {
-        this.name = name;
-        this.price = price;
+        this.item_name = name;
+        this.item_price = price;
     }
 
-    public void setName(String name)
+    public void setItem_name(String item_name)
     {
-        this.name = name;
+        this.item_name = item_name;
     }
 
     public void setPrice(double price)
     {
-        this.price = price;
+        this.item_price = price;
     }
 
-    public String getName()
+    public String getItem_name()
     {
-        return name;
+        return item_name;
     }
 
     public double getPrice()
     {
-        return price;
+        return item_price;
     }
 }

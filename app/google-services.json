@@ -1,4 +1,10 @@
 {
+  "project_info": {
+    "project_number": "690854223663",
+    "firebase_url": "https://posapp-496f7.firebaseio.com",
+    "project_id": "posapp-496f7",
+    "storage_bucket": "posapp-496f7.appspot.com"
+  },
   "client": [
     {
       "client_info": {
@@ -8,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "690854223663-r1a8e8g9v6b1079p867rm6djskdrjsh9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.admincafeposapp",
+            "certificate_hash": "fe4691934bb71e3a1246fbb322e3831cea1d2319"
+          }
+        },
         {
           "client_id": "690854223663-4b1eg8mrr3210lovjn537iis3ullk4t6.apps.googleusercontent.com",
           "client_type": 1,

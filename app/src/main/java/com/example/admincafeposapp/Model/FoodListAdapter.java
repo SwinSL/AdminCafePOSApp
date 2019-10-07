@@ -1,5 +1,6 @@
 package com.example.admincafeposapp.Model;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,11 @@ import com.example.admincafeposapp.R;
 import java.util.List;
 
 public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHolder> {
-
+    private Context context;
     private List<Food> foodList;
 
-    public FoodListAdapter(List<Food> foodList)
-    {
+    public FoodListAdapter(Context context, List<Food> foodList) {
+        this.context = context;
         this.foodList = foodList;
     }
 
@@ -29,7 +30,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
     @Override
     public void onBindViewHolder(FoodListAdapter.ViewHolder holder, int position) {
 
-        holder.nameText.setText(foodList.get(position).getName());
+        holder.nameText.setText(foodList.get(position).getItem_name());
         holder.priceText.setText(String.valueOf(foodList.get(position).getPrice()));
     }
 

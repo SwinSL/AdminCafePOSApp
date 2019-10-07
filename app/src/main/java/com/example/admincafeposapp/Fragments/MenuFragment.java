@@ -15,16 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.admincafeposapp.Model.Food;
 import com.example.admincafeposapp.Model.FoodListAdapter;
 import com.example.admincafeposapp.R;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 public class MenuFragment extends Fragment {
 
@@ -48,26 +46,22 @@ public class MenuFragment extends Fragment {
         foodListView = view.findViewById(R.id.foodList);
         foodListView.setHasFixedSize(true);
         foodListView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        foodListAdapter = new FoodListAdapter(this.getContext(), foodList);
         foodListView.setAdapter(foodListAdapter);
-        foodListAdapter = new FoodListAdapter(foodList);
 
         beveragesListView = view.findViewById(R.id.beverageList);
 
         firestore = FirebaseFirestore.getInstance();
 
-        firestore.collection("Food").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firestore.collection("Food").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@javax.annotation.Nullable QuerySnapshot documentSnapshots, FirebaseFirestoreException
-                    e) {
-                if (e != null) {
-                    Log.d(TAG, "Error : " + e.getMessage());
-                }
-
-                for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-                    if (doc.getType() == DocumentChange.Type.ADDED) {
-                        Food food = doc.getDocument().toObject(Food.class);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(DocumentSnapshot document: task.getResult()){
+                        Food food = document.toObject(Food.class);
                         foodList.add(food);
                         foodListAdapter.notifyDataSetChanged();
+                        Log.d("TAG", food.getItem_name());
                     }
                 }
             }

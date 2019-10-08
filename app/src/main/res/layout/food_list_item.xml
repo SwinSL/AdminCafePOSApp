@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="639dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/f_name_text"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="30sp"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/f_price_text"
+            android:layout_width="237dp"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:textColor="@android:color/black"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/FHorizontalLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#d3d3d3"/>
+</LinearLayout>

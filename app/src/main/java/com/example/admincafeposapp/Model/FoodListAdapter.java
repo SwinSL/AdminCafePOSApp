@@ -23,7 +23,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
 
     @Override
     public FoodListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.food_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -31,7 +31,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
     public void onBindViewHolder(FoodListAdapter.ViewHolder holder, int position) {
 
         holder.nameText.setText(foodList.get(position).getItem_name());
-        holder.priceText.setText(String.valueOf(foodList.get(position).getPrice()));
+        holder.priceText.setText(String.valueOf(foodList.get(position).getItem_price()));
     }
 
     @Override
@@ -49,8 +49,8 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
             super(itemView);
             fView = itemView;
 
-            nameText = fView.findViewById(R.id.name_text);
-            priceText = fView.findViewById(R.id.price_text);
+            nameText = fView.findViewById(R.id.f_name_text);
+            priceText = fView.findViewById(R.id.f_price_text);
         }
     }
 }

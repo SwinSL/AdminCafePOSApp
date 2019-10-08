@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -17,9 +18,14 @@ import com.example.admincafeposapp.Fragments.OrdersFragment;
 import com.example.admincafeposapp.Fragments.ReservationFragment;
 import com.example.admincafeposapp.Fragments.TablesFragment;
 import com.example.admincafeposapp.Model.Food;
+import com.example.admincafeposapp.Model.FoodDialog;
 import com.example.admincafeposapp.Model.FoodListAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,7 +37,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,4 +77,20 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
+
+    @Override
+    public void applyTexts(String name, String price) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference newFoodRef = db.collection("Food").document();
+        Food food = new Food();
+        food.setItem_name(name);
+        food.setItem_price(Double.valueOf(price));
+
+        newFoodRef.set(food);
+    }
+
+
+
+
 }

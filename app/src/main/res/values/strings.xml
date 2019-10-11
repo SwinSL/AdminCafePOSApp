@@ -5,4 +5,11 @@
     <string name="tables_title">Tables</string>
     <string name="reservations_title">Reservations</string>
     <string name="members_title">Members</string>
+    <string name="reservation_id">Reservation ID:</string>
+    <string name="table_no">Table No:</string>
+    <string name="date">Date:</string>
+    <string name="surname">Surname:</string>
+    <string name="time">Time:</string>
+    <string name="remove_reservation">Remove Reservation</string>
+    <string name="create_new_reservation">Create new Reservation</string>
 </resources>

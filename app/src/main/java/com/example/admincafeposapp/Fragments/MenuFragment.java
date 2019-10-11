@@ -18,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.admincafeposapp.Model.Beverages;
+import com.example.admincafeposapp.Model.BeveragesDialog;
 import com.example.admincafeposapp.Model.BeveragesListAdapter;
+import com.example.admincafeposapp.Model.BeveragesRemoveDialog;
 import com.example.admincafeposapp.Model.Food;
 import com.example.admincafeposapp.Model.FoodDialog;
 import com.example.admincafeposapp.Model.FoodListAdapter;
@@ -70,25 +72,52 @@ public class MenuFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         beveragesListAdapter = new BeveragesListAdapter(this.getContext(), beveragesList);
         beveragesListView.setAdapter(beveragesListAdapter);
 
-        swipeRefreshLayout = view.findViewById(R.id.List);
-        swipeRefreshLayout.setOnRefreshListener(this);
-
         foodAddBtn = view.findViewById(R.id.faddButton);
         foodAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openDialog();
+                openFoodDialog();
             }
         });
 
+        beveragesAddBtn = view.findViewById(R.id.baddButton);
+        beveragesAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openBeverageDialog();
+            }
+        });
+
+        beveragesDelBtn = view.findViewById(R.id.bdeleteButton);
+        beveragesDelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openRemoveBeverageDialog();
+            }
+        });
+
+        swipeRefreshLayout = view.findViewById(R.id.List);
+        swipeRefreshLayout.setOnRefreshListener(this);
         firestore = FirebaseFirestore.getInstance();
         getData();
     }
 
-    public void openDialog()
+    public void openFoodDialog()
     {
         FoodDialog foodDialog = new FoodDialog();
         foodDialog.show(getActivity().getSupportFragmentManager(), "Food Dialog");
+    }
+
+    public void openBeverageDialog()
+    {
+        BeveragesDialog beveragesDialog = new BeveragesDialog();
+        beveragesDialog.show(getActivity().getSupportFragmentManager(), "Beverage Dialog");
+    }
+
+    public void openRemoveBeverageDialog()
+    {
+        BeveragesRemoveDialog beveragesRemoveDialog = new BeveragesRemoveDialog();
+        beveragesRemoveDialog.show(getActivity().getSupportFragmentManager(), "Beverage Remove Dialog");
     }
 
     public void getData()

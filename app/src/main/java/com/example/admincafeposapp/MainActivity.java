@@ -17,6 +17,9 @@ import com.example.admincafeposapp.Fragments.MenuFragment;
 import com.example.admincafeposapp.Fragments.OrdersFragment;
 import com.example.admincafeposapp.Fragments.ReservationFragment;
 import com.example.admincafeposapp.Fragments.TablesFragment;
+import com.example.admincafeposapp.Model.Beverages;
+import com.example.admincafeposapp.Model.BeveragesDialog;
+import com.example.admincafeposapp.Model.BeveragesRemoveDialog;
 import com.example.admincafeposapp.Model.Food;
 import com.example.admincafeposapp.Model.FoodDialog;
 import com.example.admincafeposapp.Model.FoodListAdapter;
@@ -37,7 +40,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDialogListener {
+public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDialogListener, BeveragesDialog.BeveragesDialogListener, BeveragesRemoveDialog.BeveragesRemoveDialogListener {
+
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDi
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        db = FirebaseFirestore.getInstance();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -79,18 +86,30 @@ public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDi
     };
 
     @Override
-    public void applyTexts(String name, String price) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        DocumentReference newFoodRef = db.collection("Food").document();
+    public void addFoodText(String name, String price) {
         Food food = new Food();
         food.setItem_name(name);
         food.setItem_price(Double.valueOf(price));
-
+        DocumentReference newFoodRef = db.collection("Food").document(food.getItem_name());
         newFoodRef.set(food);
     }
 
+    @Override
+    public void addBeveragesText(String name, String price) {
+        Beverages beverages = new Beverages();
+        beverages.setItem_name(name);
+        beverages.setItem_price(Double.valueOf(price));
+        DocumentReference newBeveragesRef = db.collection("Drink").document(beverages.getItem_name());
+        newBeveragesRef.set(beverages);
+    }
 
+    @Override
+    public void deleteBeveragesText(String name) {
+        Beverages beverages = new Beverages();
+        beverages.setItem_name(name);
+        DocumentReference newBeveragesRef = db.collection("Drink").document(beverages.getItem_name());
+        newBeveragesRef.delete();
+    }
 
 
 }

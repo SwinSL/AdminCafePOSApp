@@ -40,7 +40,7 @@ public class FoodDialog extends AppCompatDialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 String foodName = editTextFoodName.getText().toString();
                 String foodPrice = editTextFoodPrice.getText().toString();
-                foodDialogListener.applyTexts(foodName, foodPrice);
+                foodDialogListener.addFoodText(foodName, foodPrice);
             }
         });
 
@@ -63,6 +63,6 @@ public class FoodDialog extends AppCompatDialogFragment {
 
     public interface FoodDialogListener
     {
-        void applyTexts(String name, String price);
+        void addFoodText(String name, String price);
     }
 }

@@ -119,7 +119,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/List"
         android:layout_width="wrap_content"
-        android:layout_height="460dp"
+        android:layout_height="450dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/HorizontalLine2">
 
@@ -132,19 +132,19 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/foodList"
                 android:layout_width="639dp"
-                android:layout_height="460dp"/>
+                android:layout_height="450dp"/>
 
             <View
                 android:id="@+id/VerticalLine"
                 android:layout_width="2dp"
-                android:layout_height="460dp"
+                android:layout_height="450dp"
                 android:background="#d3d3d3"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/beveragesList"
                 android:layout_width="639dp"
-                android:layout_height="460dp"/>
+                android:layout_height="450dp"/>
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

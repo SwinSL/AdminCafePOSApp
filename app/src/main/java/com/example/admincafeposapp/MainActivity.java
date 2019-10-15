@@ -23,6 +23,7 @@ import com.example.admincafeposapp.Model.BeveragesRemoveDialog;
 import com.example.admincafeposapp.Model.Food;
 import com.example.admincafeposapp.Model.FoodDialog;
 import com.example.admincafeposapp.Model.FoodListAdapter;
+import com.example.admincafeposapp.Model.FoodRemoveDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,7 +41,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDialogListener, BeveragesDialog.BeveragesDialogListener, BeveragesRemoveDialog.BeveragesRemoveDialogListener {
+public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDialogListener, BeveragesDialog.BeveragesDialogListener, BeveragesRemoveDialog.BeveragesRemoveDialogListener, FoodRemoveDialog.FoodRemoveDialogListener {
 
     FirebaseFirestore db;
 
@@ -109,6 +110,14 @@ public class MainActivity extends AppCompatActivity implements FoodDialog.FoodDi
         beverages.setItem_name(name);
         DocumentReference newBeveragesRef = db.collection("Drink").document(beverages.getItem_name());
         newBeveragesRef.delete();
+    }
+
+    @Override
+    public void deleteFoodText(String name) {
+        Food food = new Food();
+        food.setItem_name(name);
+        DocumentReference newFoodRef = db.collection("Food").document(food.getItem_name());
+        newFoodRef.delete();
     }
 
 

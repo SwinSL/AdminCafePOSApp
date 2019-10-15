@@ -42,7 +42,7 @@ public class BeveragesRemoveDialog extends AppCompatDialogFragment {
             }
         });
 
-        editTextBeveragesName = viewRemove.findViewById(R.id.bNameEditText);
+        editTextBeveragesName = viewRemove.findViewById(R.id.bRNameEditText);
 
         return beveragesRemoveDialogBuilder.create();
     }

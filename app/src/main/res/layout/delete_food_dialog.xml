@@ -6,7 +6,7 @@
     android:padding="20dp">
 
     <EditText
-        android:id="@+id/bRNameEditText"
+        android:id="@+id/fRNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="30dp"

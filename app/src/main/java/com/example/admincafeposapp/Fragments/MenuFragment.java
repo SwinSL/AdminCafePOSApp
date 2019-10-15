@@ -24,6 +24,7 @@ import com.example.admincafeposapp.Model.BeveragesRemoveDialog;
 import com.example.admincafeposapp.Model.Food;
 import com.example.admincafeposapp.Model.FoodDialog;
 import com.example.admincafeposapp.Model.FoodListAdapter;
+import com.example.admincafeposapp.Model.FoodRemoveDialog;
 import com.example.admincafeposapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -96,6 +97,14 @@ public class MenuFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         });
 
+        foodDelBtn = view.findViewById(R.id.fdeleteButton);
+        foodDelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openRemoveFoodDialog();
+            }
+        });
+
         swipeRefreshLayout = view.findViewById(R.id.List);
         swipeRefreshLayout.setOnRefreshListener(this);
         firestore = FirebaseFirestore.getInstance();
@@ -118,6 +127,12 @@ public class MenuFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     {
         BeveragesRemoveDialog beveragesRemoveDialog = new BeveragesRemoveDialog();
         beveragesRemoveDialog.show(getActivity().getSupportFragmentManager(), "Beverage Remove Dialog");
+    }
+
+    public void openRemoveFoodDialog()
+    {
+        FoodRemoveDialog foodRemoveDialog = new FoodRemoveDialog();
+        foodRemoveDialog.show(getActivity().getSupportFragmentManager(), "Food Remove Dialog");
     }
 
     public void getData()

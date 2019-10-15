@@ -27,15 +27,8 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(this.context).inflate(R.layout.reservation_row, parent, false);
-        ViewHolder vHolder = new ViewHolder(view);
-        vHolder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
-
-        return vHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -46,6 +39,8 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
         holder.reservation_surname.setText(reservation.getCustomer_surname());
         holder.reservation_date.setText(reservation.getDate());
         holder.reservation_time.setText(reservation.getTime());
+        holder.reservation_noOfPeople.setText(String.valueOf(reservation.getNoOfPeople()));
+
     }
 
     @Override
@@ -54,7 +49,7 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView reservation_id, reservation_surname, reservation_date, reservation_time;
+        private TextView reservation_id, reservation_surname, reservation_date, reservation_time, reservation_noOfPeople;
         private View view;
 
         public ViewHolder(@NonNull View itemView) {
@@ -64,6 +59,7 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
             reservation_surname = itemView.findViewById(R.id.textview_reservationSurname_data);
             reservation_date = itemView.findViewById(R.id.textview_reservationDate_data);
             reservation_time = itemView.findViewById(R.id.textview_reservationTime_data);
+            reservation_noOfPeople = itemView.findViewById(R.id.textview_reservationNoOfPeople_data);
         }
     }
 }

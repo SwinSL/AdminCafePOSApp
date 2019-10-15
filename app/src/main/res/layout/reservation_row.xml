@@ -35,6 +35,24 @@
                 />
 
             <TextView
+                android:id="@+id/textview_reservationNoOfPeople"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/raleway"
+                android:text="@string/no_of_people"
+                android:layout_marginStart="350dp"
+                android:layout_toEndOf="@id/textview_reservationId"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/textview_reservationNoOfPeople_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/textview_reservationNoOfPeople"
+                android:textSize="20sp"
+                android:fontFamily="@font/raleway"
+                android:layout_marginStart="5dp"
+                />
+            <TextView
                 android:id="@+id/textview_reservationSurname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -17,4 +17,9 @@
     <string name="table">Table</string>
     <string name="confirm">Confirm</string>
     <string name="tan_lee_etc">Tan, Lee, etc</string>
+    <string name="remove_table">REMOVE TABLE</string>
+    <string name="add_table">ADD TABLE</string>
+    <string name="table_number">Table Number:</string>
+    <string name="table_number_of_seat">Table Number of Seat:</string>
+    <string name="table_status">Table Status:</string>
 </resources>

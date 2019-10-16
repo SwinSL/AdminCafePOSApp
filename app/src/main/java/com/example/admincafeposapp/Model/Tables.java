@@ -5,6 +5,8 @@ public class Tables {
     String tableNo, tableStatus;
     int tableNoOfSeat;
 
+    public Tables(){}
+
     public Tables(String tableNo,int tableNoOfSeat, String tableStatus) {
         this.tableNo = tableNo;
         this.tableStatus = tableStatus;

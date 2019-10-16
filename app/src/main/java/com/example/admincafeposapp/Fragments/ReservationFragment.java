@@ -1,17 +1,15 @@
 package com.example.admincafeposapp.Fragments;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
@@ -27,26 +25,21 @@ import com.example.admincafeposapp.Adapters.ReservationRecyclerViewAdapter;
 import com.example.admincafeposapp.Model.Reservation;
 import com.example.admincafeposapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class ReservationFragment extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<Reservation> reservationArrayList;
     private ReservationRecyclerViewAdapter reservationRecyclerViewAdapter;
-    private Button add_button, remove_button, confirm_button;
-    private EditText surname_editText, noOfPeople_editText, date_editText;
-    private Spinner time_spinner, tableNo_spinner;
+    private Button add_button, remove_button, confirm_addReservationBtn, confirm_removeReservationBtn;
+    private EditText addReservation_surname_editText, addReservation_noOfPeople_editText, addReservation_date_editText;
+    private Spinner addReservation_time_spinner, addReservation_tableNo_spinner, removeReservation_surname_spinner, removeReservation_date_spinner, removeReservation_time_spinner, removeReservation_tableNo_spinner;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Reservations");
@@ -78,6 +71,139 @@ public class ReservationFragment extends Fragment {
                 showAddReservationPopup();
             }
         });
+        remove_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRemoveReservationPopup();
+            }
+        });
+    }
+
+    private void showRemoveReservationPopup() {
+        @SuppressLint("InflateParams") final View popupView = LayoutInflater.from(getContext()).inflate(R.layout.remove_reservation_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(popupView, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+        removeReservation_surname_spinner = popupView.findViewById(R.id.remove_reservation_surname_spinner);
+        removeReservation_date_spinner = popupView.findViewById(R.id.remove_reservation_date_spinner);
+        removeReservation_time_spinner = popupView.findViewById(R.id.remove_reservation_time_spinner);
+        removeReservation_tableNo_spinner = popupView.findViewById(R.id.remove_reservation_table_spinner);
+        confirm_removeReservationBtn = popupView.findViewById(R.id.confirm_removeReservationBtn);
+
+        ArrayList<String> surname_options = new ArrayList<>();
+
+        for(Reservation reservation: reservationArrayList){
+            surname_options.add(reservation.getCustomer_surname());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, surname_options);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        removeReservation_surname_spinner.setAdapter(adapter);
+
+        removeReservation_surname_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                getRemoveReservationDateOptions(removeReservation_surname_spinner.getSelectedItem().toString());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        confirm_removeReservationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(validateRemoveFields()){
+                    final String surname = removeReservation_surname_spinner.getSelectedItem().toString();
+                    final String tableNo = removeReservation_tableNo_spinner.getSelectedItem().toString();
+                    final String date = removeReservation_date_spinner.getSelectedItem().toString();
+                    final String time = removeReservation_time_spinner.getSelectedItem().toString();
+
+                    collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(DocumentSnapshot document: task.getResult()){
+                                Reservation reservation = document.toObject(Reservation.class);
+                                if(reservation.getCustomer_surname().equals(surname) && reservation.getTable_no().equals(tableNo) && reservation.getDate().equals(date) && reservation.getTime().equals(time)){
+                                    collectionReference.document(document.getId()).delete();
+                                }
+                            }
+                            getReservations();
+                        }
+                        }
+                    });
+
+                    Toast.makeText(getContext(),"Reservation removed successfully!", Toast.LENGTH_LONG).show();
+                    popupWindow.dismiss();
+                }else{
+                    Toast.makeText(getContext(),"Please complete the fields.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private boolean validateRemoveFields() {
+        return (!removeReservation_surname_spinner.getSelectedItem().toString().isEmpty() || removeReservation_date_spinner.getSelectedItem().toString().isEmpty() || removeReservation_time_spinner.getSelectedItem().toString().isEmpty() || removeReservation_tableNo_spinner.getSelectedItem().toString().isEmpty());
+    }
+
+    private void getRemoveReservationDateOptions(final String surname){
+        ArrayList<String> date_options = new ArrayList<>();
+
+        for(Reservation reservation: reservationArrayList){
+            if(reservation.getCustomer_surname().equals(surname))
+                date_options.add(reservation.getDate());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, date_options);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        removeReservation_date_spinner.setAdapter(adapter);
+
+        removeReservation_date_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                getRemoveReservationTimeOptions(surname, removeReservation_date_spinner.getSelectedItem().toString());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+    }
+
+    private void getRemoveReservationTimeOptions(final String surname, final String date) {
+        ArrayList<String> time_options = new ArrayList<>();
+
+        for(Reservation reservation: reservationArrayList){
+            if(reservation.getCustomer_surname().equals(surname) && reservation.getDate().equals(date))
+                time_options.add(reservation.getTime());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, time_options);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        removeReservation_time_spinner.setAdapter(adapter);
+
+        removeReservation_time_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                getRemoveReservationTableOptions(surname, date, removeReservation_time_spinner.getSelectedItem().toString());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+    }
+
+    private void getRemoveReservationTableOptions(String surname, String date, String time) {
+        ArrayList<String> table_options = new ArrayList<>();
+
+        for(Reservation reservation: reservationArrayList){
+            if(reservation.getCustomer_surname().equals(surname) && reservation.getDate().equals(date) && reservation.getTime().equals(time))
+                table_options.add(reservation.getTable_no());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, table_options);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        removeReservation_tableNo_spinner.setAdapter(adapter);
     }
 
     private void showAddReservationPopup() {
@@ -88,32 +214,32 @@ public class ReservationFragment extends Fragment {
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
-        surname_editText = popupView.findViewById(R.id.add_reservation_surname_edittext);
-        noOfPeople_editText = popupView.findViewById(R.id.add_reservation_noOfPeople_edittext);
-        date_editText = popupView.findViewById(R.id.add_reservation_date_editText);
-        time_spinner = popupView.findViewById(R.id.add_reservation_time_spinner);
-        tableNo_spinner = popupView.findViewById(R.id.add_reservation_table_spinner);
-        confirm_button = popupView.findViewById(R.id.confirm_reservationBtn);
+        addReservation_surname_editText = popupView.findViewById(R.id.add_reservation_surname_edittext);
+        addReservation_noOfPeople_editText = popupView.findViewById(R.id.add_reservation_noOfPeople_edittext);
+        addReservation_date_editText = popupView.findViewById(R.id.add_reservation_date_editText);
+        addReservation_time_spinner = popupView.findViewById(R.id.add_reservation_time_spinner);
+        addReservation_tableNo_spinner = popupView.findViewById(R.id.add_reservation_table_spinner);
+        confirm_addReservationBtn = popupView.findViewById(R.id.confirm_addReservationBtn);
 
-        date_editText.setOnClickListener(new View.OnClickListener() {
+        addReservation_date_editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!date_editText.getText().toString().isEmpty()){
-                    getTimeOptions(date_editText.getText().toString());
+                if(!addReservation_date_editText.getText().toString().isEmpty()){
+                    getAddReservationTimeOptions(addReservation_date_editText.getText().toString());
                 }
             }
         });
 
-        confirm_button.setOnClickListener(new View.OnClickListener() {
+        confirm_addReservationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(validateFields()){
-                    String id = surname_editText.getText().toString().concat(date_editText.getText().toString()).concat(time_spinner.getSelectedItem().toString()).replaceAll("\\W", "");
-                    String surname = surname_editText.getText().toString();
-                    String tableNo = tableNo_spinner.getSelectedItem().toString();
-                    String date = date_editText.getText().toString();
-                    String time = time_spinner.getSelectedItem().toString();
-                    int noOfPeople = Integer.parseInt(noOfPeople_editText.getText().toString());
+                if(validateAddFields()){
+                    String id = addReservation_surname_editText.getText().toString().concat(addReservation_date_editText.getText().toString()).concat(addReservation_time_spinner.getSelectedItem().toString()).concat(addReservation_tableNo_spinner.getSelectedItem().toString()).replaceAll("\\W", "").toLowerCase();
+                    String surname = addReservation_surname_editText.getText().toString();
+                    String tableNo = addReservation_tableNo_spinner.getSelectedItem().toString();
+                    String date = addReservation_date_editText.getText().toString();
+                    String time = addReservation_time_spinner.getSelectedItem().toString();
+                    int noOfPeople = Integer.parseInt(addReservation_noOfPeople_editText.getText().toString());
 
                     Reservation reservation = new Reservation(id, surname, tableNo, date, time, noOfPeople);
                     collectionReference.document().set(reservation);
@@ -128,8 +254,8 @@ public class ReservationFragment extends Fragment {
 
     }
 
-    private boolean validateFields() {
-        return !(surname_editText.getText().toString().isEmpty() || noOfPeople_editText.getText().toString().isEmpty() || date_editText.getText().toString().isEmpty() || time_spinner.getSelectedItem().toString().isEmpty() || tableNo_spinner.getSelectedItem().toString().isEmpty());
+    private boolean validateAddFields() {
+        return !(addReservation_surname_editText.getText().toString().isEmpty() || addReservation_noOfPeople_editText.getText().toString().isEmpty() || addReservation_date_editText.getText().toString().isEmpty() || addReservation_time_spinner.getSelectedItem().toString().isEmpty() || addReservation_tableNo_spinner.getSelectedItem().toString().isEmpty());
     }
 
     private void getReservations(){
@@ -150,8 +276,7 @@ public class ReservationFragment extends Fragment {
     }
 
 
-
-    private void getTimeOptions(String date_selected) {
+    private void getAddReservationTimeOptions(String date_selected) {
         ArrayList<String> time_options = new ArrayList<>();
         time_options.add("5:00PM");
         time_options.add("5:30PM");
@@ -163,20 +288,14 @@ public class ReservationFragment extends Fragment {
         time_options.add("8:30PM");
         time_options.add("9:00PM");
 
-        for(Reservation reservation: reservationArrayList){
-            if(reservation.getDate().equals(date_selected)){
-                time_options.remove(reservation.getTime());
-            }
-        }
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, time_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        time_spinner.setAdapter(adapter);
+        addReservation_time_spinner.setAdapter(adapter);
 
-        getTables();
+        getTables(date_selected, addReservation_time_spinner.getSelectedItem().toString());
     }
 
-    private void getTables() {
+    private void getTables(String date_selected, String time_selected) {
         ArrayList<String> table_options = new ArrayList<>();
         table_options.add("1A");
         table_options.add("2A");
@@ -185,9 +304,15 @@ public class ReservationFragment extends Fragment {
         table_options.add("2B");
         table_options.add("3B");
 
+        for(Reservation reservation: reservationArrayList){
+            if(reservation.getDate().equals(date_selected) && reservation.getTime().equals(time_selected)){
+                table_options.remove(reservation.getTable_no());
+            }
+        }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, table_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        tableNo_spinner.setAdapter(adapter);
+        addReservation_tableNo_spinner.setAdapter(adapter);
     }
 
 /*    private void setReservation(){

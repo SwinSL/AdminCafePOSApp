@@ -42,10 +42,77 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class MembersFragment extends Fragment {
+public class MembersFragment extends Fragment{
 
     private  FirebaseDatabase memberdb;
     private  DatabaseReference databaseReference;
+
+    private MemberAdapter.recyclerListener listener = new MemberAdapter.recyclerListener() {
+        @Override
+        public void recyclerOnClick(int position) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+            layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
+
+            builder.setTitle("Update member name")
+                    .setView(container)
+                    .setNegativeButton("Cancel",null)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            memID = container.findViewById(R.id.editText_member_ID);
+                            memName = container.findViewById(R.id.editText_member_name);
+                            final String ID = memID.getText().toString();
+                            final String Name = memName.getText().toString();
+
+                            if(TextUtils.isEmpty(ID))
+                            {
+                                Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            else if(TextUtils.isEmpty(Name))
+                            {
+                                Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            final Query query = databaseReference.orderByChild("id").equalTo(ID);
+
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
+                                    {
+                                        Members test = dataSnapshot1.getValue(Members.class);
+
+                                        if(ID.equals(test.getID()))
+                                        {
+                                            test.setName(Name);
+                                            dataSnapshot1.getRef().setValue(test);
+                                            Toast.makeText(getContext(),"Successfully update member" ,Toast.LENGTH_LONG).show();
+                                        }
+
+                                        else
+                                        {
+                                            Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+    };
 
     private RecyclerView member_recycler;
     private ArrayList<Members> membersList;
@@ -80,6 +147,8 @@ public class MembersFragment extends Fragment {
         btn_register.setOnClickListener(buttonListener);
         btn_remove = view.findViewById(R.id.button_remove);
         btn_remove.setOnClickListener(buttonListener);
+
+
     }
 
     private void readFromDatabase() {
@@ -92,7 +161,7 @@ public class MembersFragment extends Fragment {
                     Members members = dataSnapshot1.getValue(Members.class);
                     membersList.add(members);
                 }
-                memberAdapter = new MemberAdapter(getContext(),membersList);
+                memberAdapter = new MemberAdapter(getContext(),membersList, listener);
                 member_recycler.setAdapter(memberAdapter);
             }
 
@@ -147,8 +216,6 @@ public class MembersFragment extends Fragment {
                                             for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
                                             {
                                                 Members test = dataSnapshot1.getValue(Members.class);
-                                                //dataSnapshot1.getRef().removeValue();
-                                                //Toast.makeText(getContext(),"Value is : " + test.getName(),Toast.LENGTH_LONG).show();
 
                                                 if(Name.equals(test.getName()))
                                                 {
@@ -165,7 +232,6 @@ public class MembersFragment extends Fragment {
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
                                         }
                                     });
 
@@ -263,4 +329,5 @@ public class MembersFragment extends Fragment {
             }
         }
     };
+
 }

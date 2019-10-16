@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView_tableNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="26dp"
+        android:fontFamily="@font/raleway"
+        android:text="@string/table_number"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_tableNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:fontFamily="@font/raleway"
+        android:text="00"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_tableNo"
+        app:layout_constraintStart_toEndOf="@+id/textView_tableNo"
+        app:layout_constraintTop_toTopOf="@+id/textView_tableNo" />
+
+    <TextView
+        android:id="@+id/textView_tableNoSeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="26dp"
+        android:fontFamily="@font/raleway"
+        android:text="@string/table_number_of_seat"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_tableNo" />
+
+    <TextView
+        android:id="@+id/textView_tableNoSeatData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:fontFamily="@font/raleway"
+        android:text="00"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_tableNoSeat"
+        app:layout_constraintStart_toEndOf="@+id/textView_tableNoSeat"
+        app:layout_constraintTop_toTopOf="@+id/textView_tableNoSeat" />
+
+    <TextView
+        android:id="@+id/textView_tableStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="208dp"
+        android:fontFamily="@font/raleway"
+        android:text="@string/table_status"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_tableStatusData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:fontFamily="@font/raleway"
+        android:text="Available"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_tableStatus"
+        app:layout_constraintStart_toEndOf="@+id/textView_tableStatus"
+        app:layout_constraintTop_toTopOf="@+id/textView_tableStatus" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

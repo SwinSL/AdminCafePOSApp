@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/textView_memberID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/raleway"
+                android:textSize="20sp"
+                android:text="Member ID : " />
+
+            <TextView
+                android:id="@+id/textView_memberIdData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/textView_memberID"
+                android:textSize="20sp"
+                android:fontFamily="@font/raleway"
+                android:layout_marginStart="5dp"
+                tool:text="1001"/>
+
+            <TextView
+                android:id="@+id/textView_memberName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name : "
+                android:fontFamily="@font/raleway"
+                android:textSize="20sp"
+                android:layout_alignStart="@id/textView_memberID"
+                android:layout_below="@id/textView_memberID"/>
+
+            <TextView
+                android:id="@+id/textView_memberNameData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/raleway"
+                android:textSize="20sp"
+                tool:text="Banana Kid"
+                android:layout_toEndOf="@id/textView_memberName"
+                android:layout_below="@id/textView_memberID"
+                android:layout_marginStart="5dp"/>
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

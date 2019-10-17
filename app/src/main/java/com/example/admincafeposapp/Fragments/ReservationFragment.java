@@ -230,6 +230,16 @@ public class ReservationFragment extends Fragment {
             }
         });
 
+        addReservation_time_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                getTables(addReservation_date_editText.getText().toString(), addReservation_time_spinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) { }
+        });
+
         confirm_addReservationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -291,8 +301,6 @@ public class ReservationFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, time_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         addReservation_time_spinner.setAdapter(adapter);
-
-        getTables(date_selected, addReservation_time_spinner.getSelectedItem().toString());
     }
 
     private void getTables(String date_selected, String time_selected) {

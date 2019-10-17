@@ -15,14 +15,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.admincafeposapp.Adapters.TableRecyclerViewAdapter;
 import com.example.admincafeposapp.Model.Tables;
 import com.example.admincafeposapp.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
 public class TablesFragment extends Fragment {
 
+    //RecyclerView and Adapter
     private RecyclerView table_recyclerView;
     private TableRecyclerViewAdapter table_Adapter;
     private ArrayList<Tables> tablesArrayList;
+
+    //FireStore Database
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference tableCollectionReference = db.collection("Tables");
 
     @Nullable
     @Override
@@ -35,11 +46,8 @@ public class TablesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //DEMO Only
         tablesArrayList = new ArrayList<>();
-        tablesArrayList.add(new Tables("A01", 6, "Available"));
-        tablesArrayList.add(new Tables("A02", 5, "Available"));
-        tablesArrayList.add(new Tables("A03", 4, "Unavailable"));
+        readTablesFromDatabase();
 
         table_recyclerView = view.findViewById(R.id.recyclerView_table);
         table_recyclerView.setHasFixedSize(true);
@@ -48,5 +56,23 @@ public class TablesFragment extends Fragment {
         table_recyclerView.setAdapter(table_Adapter);
         table_recyclerView.addItemDecoration(new DividerItemDecoration(table_recyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
+    }
+
+    private void readTablesFromDatabase()
+    {
+        tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    for(DocumentSnapshot document: task.getResult())
+                    {
+                        Tables tables = document.toObject(Tables.class);
+                        tablesArrayList.add(tables);
+                    }
+                    table_Adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 }

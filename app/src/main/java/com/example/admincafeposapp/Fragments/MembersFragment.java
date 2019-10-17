@@ -50,78 +50,84 @@ public class MembersFragment extends Fragment{
     private MemberAdapter.recyclerListener listener = new MemberAdapter.recyclerListener() {
         @Override
         public void recyclerOnClick(int position) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
             layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
+            constraintLayout = container.findViewById(R.id.constraint);
+            popupWindow = new PopupWindow(container, 400, 400, true);
+            popupWindow.showAtLocation(constraintLayout,Gravity.CENTER,0,0);
+            btn_confirm = container.findViewById(R.id.button_confirm);
+            title = container.findViewById(R.id.tv_title);
 
-            builder.setTitle("Update member name")
-                    .setView(container)
-                    .setNegativeButton("Cancel",null)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            title.setText("Update member");
+            btn_confirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    memID = container.findViewById(R.id.et_id);
+                    memName = container.findViewById(R.id.et_name);
+                    final String ID = memID.getText().toString();
+                    final String Name = memName.getText().toString();
+
+                    if(TextUtils.isEmpty(ID))
+                    {
+                        Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    else if(TextUtils.isEmpty(Name))
+                    {
+                        Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    final Query query = databaseReference.orderByChild("id").equalTo(ID);
+
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            memID = container.findViewById(R.id.editText_member_ID);
-                            memName = container.findViewById(R.id.editText_member_name);
-                            final String ID = memID.getText().toString();
-                            final String Name = memName.getText().toString();
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            if(TextUtils.isEmpty(ID))
+                            for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
                             {
-                                Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
+                                Members test = dataSnapshot1.getValue(Members.class);
 
-                            else if(TextUtils.isEmpty(Name))
-                            {
-                                Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-
-                            final Query query = databaseReference.orderByChild("id").equalTo(ID);
-
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                    for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
-                                    {
-                                        Members test = dataSnapshot1.getValue(Members.class);
-
-                                        if(ID.equals(test.getID()))
-                                        {
-                                            test.setName(Name);
-                                            dataSnapshot1.getRef().setValue(test);
-                                            Toast.makeText(getContext(),"Successfully update member" ,Toast.LENGTH_LONG).show();
-                                        }
-
-                                        else
-                                        {
-                                            Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
-                                        }
-                                    }
+                                if(ID.equals(test.getID()))
+                                {
+                                    test.setName(Name);
+                                    dataSnapshot1.getRef().setValue(test);
+                                    Toast.makeText(getContext(),"Successfully update member" ,Toast.LENGTH_LONG).show();
+                                    popupWindow.dismiss();
                                 }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                else
+                                {
+                                    Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
                                 }
-                            });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
                     });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+                }
+            });
         }
     };
 
     private RecyclerView member_recycler;
     private ArrayList<Members> membersList;
     private MemberAdapter memberAdapter;
-    private Button btn_register, btn_remove;
+    private Button btn_register, btn_remove, btn_confirm;
 
-    //popup
+    //alert
     private LayoutInflater layoutInflater;
     private EditText memID, memName;
+
+    //popup
+    private PopupWindow popupWindow;
+    private ConstraintLayout constraintLayout;
+    private TextView title;
+
 
     @Nullable
     @Override
@@ -147,7 +153,6 @@ public class MembersFragment extends Fragment{
         btn_register.setOnClickListener(buttonListener);
         btn_remove = view.findViewById(R.id.button_remove);
         btn_remove.setOnClickListener(buttonListener);
-
 
     }
 
@@ -176,158 +181,108 @@ public class MembersFragment extends Fragment{
         @Override
         public void onClick(View view) {
 
-            AlertDialog.Builder mybuilder = new AlertDialog.Builder(getContext());
+                layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
+                constraintLayout = container.findViewById(R.id.constraint);
+                popupWindow = new PopupWindow(container, 400, 400, true);
+                popupWindow.showAtLocation(constraintLayout,Gravity.CENTER,0,0);
+                btn_confirm = container.findViewById(R.id.button_confirm);
+                title = container.findViewById(R.id.tv_title);
+                switch (view.getId())
+                {
+                    case R.id.button_register:
+                        btn_confirm.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                memID = container.findViewById(R.id.et_id);
+                                memName = container.findViewById(R.id.et_name);
 
-            layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
+                                String key = databaseReference.push().getKey();
+                                String ID = memID.getText().toString();
+                                String Name = memName.getText().toString();
 
-            switch (view.getId())
-            {
-                case R.id.button_remove:
-                    mybuilder.setView(container)
-                            .setTitle("Remove member")
-                            .setNegativeButton("Cancel", null)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    memID = container.findViewById(R.id.editText_member_ID);
-                                    memName = container.findViewById(R.id.editText_member_name);
+                                if(TextUtils.isEmpty(ID))
+                                {
+                                    Toast.makeText(getContext(),"Please enter an ID", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
 
-                                    final String ID = memID.getText().toString();
-                                    final String Name = memName.getText().toString();
+                                else if(TextUtils.isEmpty((Name)))
+                                {
+                                    Toast.makeText(getContext(),"Please enter name", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
 
-                                    if(TextUtils.isEmpty(ID))
-                                    {
-                                        Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
+                                else
+                                {
+                                    Members member = new Members(ID, Name);
 
-                                    else if(TextUtils.isEmpty(Name))
-                                    {
-                                        Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
+                                    databaseReference.child(key).setValue(member);
 
-                                    final Query query = databaseReference.orderByChild("id").equalTo(ID);
+                                    Toast.makeText(getContext(),"Successfully register member", Toast.LENGTH_SHORT).show();
+                                    popupWindow.dismiss();
+                                }
+                            }
+                        });
+                        break;
 
-                                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
+                    case R.id.button_remove:
+                        title.setText("Remove member");
+                        btn_confirm.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                memID = container.findViewById(R.id.et_id);
+                                memName = container.findViewById(R.id.et_name);
+
+                                final String ID = memID.getText().toString();
+                                final String Name = memName.getText().toString();
+
+                                if(TextUtils.isEmpty(ID))
+                                {
+                                    Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                else if(TextUtils.isEmpty(Name))
+                                {
+                                    Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                final Query query = databaseReference.orderByChild("id").equalTo(ID);
+
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
+                                        {
+                                            Members test = dataSnapshot1.getValue(Members.class);
+
+                                            if(Name.equals(test.getName()))
                                             {
-                                                Members test = dataSnapshot1.getValue(Members.class);
+                                                dataSnapshot1.getRef().removeValue();
+                                                Toast.makeText(getContext(),"Successfully delete member",Toast.LENGTH_LONG).show();
+                                            }
 
-                                                if(Name.equals(test.getName()))
-                                                {
-                                                    dataSnapshot1.getRef().removeValue();
-                                                    Toast.makeText(getContext(),"Successfully delete member",Toast.LENGTH_LONG).show();
-                                                }
-
-                                                else
-                                                {
-                                                    Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
-                                                }
+                                            else
+                                            {
+                                                Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
                                             }
                                         }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        }
-                                    });
-
-                                }
-                            });
-
-                    AlertDialog alertDialog = mybuilder.create();
-                    alertDialog.show();
-                    break;
-
-                case R.id.button_register:
-                    mybuilder.setView(container)
-                            .setTitle("Add member")
-                            .setNegativeButton("Cancel",null)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    memID = container.findViewById(R.id.editText_member_ID);
-                                    memName = container.findViewById(R.id.editText_member_name);
-
-                                    String key = databaseReference.push().getKey();
-                                    String ID = memID.getText().toString();
-                                    String Name = memName.getText().toString();
-
-                                    if(TextUtils.isEmpty(ID))
-                                    {
-                                        Toast.makeText(getContext(),"Please enter an ID", Toast.LENGTH_SHORT).show();
-                                        return;
                                     }
 
-                                    else if(TextUtils.isEmpty((Name)))
-                                    {
-                                        Toast.makeText(getContext(),"Please enter name", Toast.LENGTH_SHORT).show();
-                                        return;
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
                                     }
+                                });
 
-                                    else
-                                    {
-                                        Members member = new Members(ID, Name);
+                            }
+                        });
+                        break;
+                }
 
-                                        databaseReference.child(key).setValue(member);
 
-                                        Toast.makeText(getContext(),"Successfully register member", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-
-                    AlertDialog alertDialog1 = mybuilder.create();
-                    alertDialog1.show();
-
-                /*layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
-
-                popupWindow = new PopupWindow(container,400,300,true);
-                popupWindow.showAtLocation(constraintLayout, Gravity.CENTER, 0 , 0);
-                popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-                memID = container.findViewById(R.id.editText_member_ID);
-                memName = container.findViewById(R.id.editText_member_name);
-                cancel = container.findViewById(R.id.button_cancel);
-                ok = container.findViewById(R.id.button_confirm);
-
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        popupWindow.dismiss();
-                        return;
-                    }
-                });
-
-                ok.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String key = databaseReference.push().getKey();
-                        String ID = memID.getText().toString();
-                        String Name = memName.getText().toString();
-
-                        Members member = new Members(ID, Name);
-
-                        databaseReference.child(key).setValue(member);
-
-                        popupWindow.dismiss();
-                        return;
-                    }
-                });*/
-
-                /*container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        popupWindow.dismiss();
-                        return;
-                    }
-                });*/
-                    break;
             }
-        }
     };
 
 }

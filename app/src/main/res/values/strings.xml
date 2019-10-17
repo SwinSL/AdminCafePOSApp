@@ -20,6 +20,10 @@
     <string name="remove_table">REMOVE TABLE</string>
     <string name="add_table">ADD TABLE</string>
     <string name="table_number">Table Number:</string>
-    <string name="table_number_of_seat">Table Number of Seat:</string>
     <string name="table_status">Table Status:</string>
+    <string name="add_table_info">Add Table Info</string>
+    <string name="number_of_seats">Number of Seats:</string>
+    <string name="number_of_seat_popup">Number of Seat:</string>
+
+
 </resources>

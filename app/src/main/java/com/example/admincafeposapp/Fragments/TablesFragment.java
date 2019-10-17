@@ -1,9 +1,16 @@
 package com.example.admincafeposapp.Fragments;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +42,10 @@ public class TablesFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference tableCollectionReference = db.collection("Tables");
 
+    //Popup Add Table Info
+    private EditText editText_tableNumber, editText_numberOfSeat, editText_tableStatus;
+    private Button button_tableConfirm, button_addTable;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -46,6 +57,8 @@ public class TablesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        button_addTable = view.findViewById(R.id.button_addTable);
+
         tablesArrayList = new ArrayList<>();
         readTablesFromDatabase();
 
@@ -56,10 +69,18 @@ public class TablesFragment extends Fragment {
         table_recyclerView.setAdapter(table_Adapter);
         table_recyclerView.addItemDecoration(new DividerItemDecoration(table_recyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
+        button_addTable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupAddTable();
+            }
+        });
+
     }
 
     private void readTablesFromDatabase()
     {
+        tablesArrayList.clear();
         tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -74,5 +95,49 @@ public class TablesFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void PopupAddTable()
+    {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.add_table_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        editText_tableNumber = view.findViewById(R.id.editText_tableNo);
+        editText_numberOfSeat = view.findViewById(R.id.editText_tableNumberOfSeat);
+        editText_tableStatus = view.findViewById(R.id.editText_tableStatus);
+        button_tableConfirm = view.findViewById(R.id.button_confirmAddTable);
+
+        button_tableConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(validateAddFields())
+                {
+                    String tableNumber = editText_tableNumber.getText().toString();
+                    int numberOfSeat = Integer.parseInt(editText_numberOfSeat.getText().toString());
+                    String tableStatus = editText_tableStatus.getText().toString();
+
+                    Tables tables = new Tables(tableNumber, numberOfSeat, tableStatus);
+                    tableCollectionReference.document().set(tables);
+                    readTablesFromDatabase();
+
+                    Toast.makeText(getContext(),"New Tables is added Successfully!", Toast.LENGTH_LONG).show();
+                    popupWindow.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Please complete the tables information!.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    private boolean validateAddFields() {
+        return !(editText_tableNumber.getText().toString().isEmpty() || editText_numberOfSeat.getText().toString().isEmpty() || editText_tableStatus.getText().toString().isEmpty());
     }
 }

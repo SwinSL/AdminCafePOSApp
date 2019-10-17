@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray">
+
+
+    <TextView
+        android:id="@+id/textView_tableTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/raleway"
+        android:padding="10dp"
+        android:text="@string/add_table_info"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/tablePopup_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="160dp" />
+
+    <TextView
+        android:id="@+id/textView_popupTableNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="@string/table_number"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tablePopup_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_tableTitle" />
+
+    <EditText
+        android:id="@+id/editText_tableNo"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:background="@drawable/edit_text_style"
+        android:fontFamily="@font/raleway"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_popupTableNumber"
+        app:layout_constraintStart_toEndOf="@+id/tablePopup_guideline"
+        app:layout_constraintTop_toTopOf="@+id/textView_popupTableNumber" />
+
+    <TextView
+        android:id="@+id/textView_popupTableNumberOfSeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/number_of_seat_popup"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tablePopup_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_popupTableNumber" />
+
+    <EditText
+        android:id="@+id/editText_tableNumberOfSeat"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:background="@drawable/edit_text_style"
+        android:fontFamily="@font/raleway"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_popupTableNumberOfSeat"
+        app:layout_constraintStart_toEndOf="@+id/tablePopup_guideline"
+        app:layout_constraintTop_toTopOf="@+id/textView_popupTableNumberOfSeat" />
+
+    <TextView
+        android:id="@+id/textView_popupTableStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/table_status"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tablePopup_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_popupTableNumberOfSeat" />
+
+    <EditText
+        android:id="@+id/editText_tableStatus"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:background="@drawable/edit_text_style"
+        android:fontFamily="@font/raleway"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_popupTableStatus"
+        app:layout_constraintStart_toEndOf="@+id/tablePopup_guideline"
+        app:layout_constraintTop_toTopOf="@+id/textView_popupTableStatus" />
+
+    <Button
+        android:id="@+id/button_confirmAddTable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_tableStatus" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

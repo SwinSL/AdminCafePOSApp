@@ -44,7 +44,11 @@ public class TablesFragment extends Fragment {
 
     //Popup Add Table Info
     private EditText editText_tableNumber, editText_numberOfSeat, editText_tableStatus;
-    private Button button_tableConfirm, button_addTable;
+    private Button button_tableAddConfirm, button_addTable;
+
+    //Popup Remove Table
+    private EditText editText_removeTableNumber;
+    private Button button_tableRemoveConfirm, button_removeTable;
 
     @Nullable
     @Override
@@ -58,6 +62,7 @@ public class TablesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         button_addTable = view.findViewById(R.id.button_addTable);
+        button_removeTable = view.findViewById(R.id.button_removeTable);
 
         tablesArrayList = new ArrayList<>();
         readTablesFromDatabase();
@@ -73,6 +78,13 @@ public class TablesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 PopupAddTable();
+            }
+        });
+
+        button_removeTable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupRemoveTable();
             }
         });
 
@@ -109,9 +121,9 @@ public class TablesFragment extends Fragment {
         editText_tableNumber = view.findViewById(R.id.editText_tableNo);
         editText_numberOfSeat = view.findViewById(R.id.editText_tableNumberOfSeat);
         editText_tableStatus = view.findViewById(R.id.editText_tableStatus);
-        button_tableConfirm = view.findViewById(R.id.button_confirmAddTable);
+        button_tableAddConfirm = view.findViewById(R.id.button_confirmAddTable);
 
-        button_tableConfirm.setOnClickListener(new View.OnClickListener() {
+        button_tableAddConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -139,5 +151,58 @@ public class TablesFragment extends Fragment {
 
     private boolean validateAddFields() {
         return !(editText_tableNumber.getText().toString().isEmpty() || editText_numberOfSeat.getText().toString().isEmpty() || editText_tableStatus.getText().toString().isEmpty());
+    }
+
+    private void PopupRemoveTable(){
+
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.remove_table_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        editText_removeTableNumber = view.findViewById(R.id.editText_tableNoRemove);
+        button_tableRemoveConfirm = view.findViewById(R.id.button_confirmRemoveTable);
+
+        button_tableRemoveConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!editText_removeTableNumber.getText().toString().isEmpty())
+                {
+                    final String tableNoRemove = editText_removeTableNumber.getText().toString();
+
+                    tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful())
+                            {
+                                for(DocumentSnapshot document: task.getResult())
+                                {
+                                    Tables tables = document.toObject(Tables.class);
+                                    if(tables.getTableNo().equals(tableNoRemove))
+                                    {
+                                        tableCollectionReference.document(document.getId()).delete();
+                                        Toast.makeText(getContext(),"Tables Number: " + tableNoRemove + "is removed!", Toast.LENGTH_LONG).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(getContext(),"Please enter valid Table Number", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                readTablesFromDatabase();
+                            }
+                        }
+                    });
+
+
+                    popupWindow.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Please enter Table Number", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

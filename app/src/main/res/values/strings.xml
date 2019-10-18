@@ -24,6 +24,7 @@
     <string name="add_table_info">Add Table Info</string>
     <string name="number_of_seats">Number of Seats:</string>
     <string name="number_of_seat_popup">Number of Seat:</string>
+    <string name="remove_table_popup">Remove Table</string>
 
 
 </resources>

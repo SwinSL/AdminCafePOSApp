@@ -184,7 +184,7 @@ public class MembersFragment extends Fragment{
                 layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
                 constraintLayout = container.findViewById(R.id.constraint);
-                popupWindow = new PopupWindow(container, 400, 400, true);
+                popupWindow = new PopupWindow(container, 400, WindowManager.LayoutParams.WRAP_CONTENT, true);
                 popupWindow.showAtLocation(constraintLayout,Gravity.CENTER,0,0);
                 btn_confirm = container.findViewById(R.id.button_confirm);
                 title = container.findViewById(R.id.tv_title);
@@ -262,6 +262,7 @@ public class MembersFragment extends Fragment{
                                             {
                                                 dataSnapshot1.getRef().removeValue();
                                                 Toast.makeText(getContext(),"Successfully delete member",Toast.LENGTH_LONG).show();
+                                                popupWindow.dismiss();
                                             }
 
                                             else

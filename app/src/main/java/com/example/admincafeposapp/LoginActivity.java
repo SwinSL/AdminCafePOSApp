@@ -13,76 +13,84 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.admincafeposapp.Model.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText editText_email, editText_pass;
+    private TextView textView_error;
+    private EditText editText_username, editText_pass;
     private Button btn_login;
-    private TextView error;
-    private FirebaseAuth firebaseAuth;
-    private ProgressDialog progressDialog;
+    private DatabaseReference mReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        error = findViewById(R.id.textView_error);
-        editText_email = findViewById(R.id.editText_username);
+        textView_error = findViewById(R.id.textView_error);
+        editText_username = findViewById(R.id.editText_username);
         editText_pass = findViewById(R.id.editText_pass);
         btn_login = findViewById(R.id.button_login);
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        progressDialog = new ProgressDialog(this);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String user = editText_email.getText().toString();
-                String pass = editText_pass.getText().toString();
+                final String username = editText_username.getText().toString();
+                final String pass = editText_pass.getText().toString();
 
-                if(TextUtils.isEmpty(user))
-                {
-                    Toast.makeText(getApplicationContext(),"Please enter your email",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                mReference = FirebaseDatabase.getInstance().getReference().child("Users").child("Admin");
+                ValueEventListener listener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
 
-                else if(TextUtils.isEmpty(pass))
-                {
-                    Toast.makeText(getApplicationContext(),"Please enter your password",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                        if(TextUtils.isEmpty(username)){
+                            textView_error.setText("Username is empty");
+                            Toast.makeText(getApplicationContext(),"Please enter username",Toast.LENGTH_SHORT).show();
 
-                else
-                {
-                    progressDialog.setMessage("Logging in");
-                    progressDialog.show();
+                        }
 
-                    firebaseAuth.signInWithEmailAndPassword(user,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful())
+                        else if(TextUtils.isEmpty(pass)){
+                            textView_error.setText("Password is empty");
+                            Toast.makeText(getApplicationContext(),"Please enter password",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            if(user.getUsername().equals(username))
                             {
-                                error.setText(null);
-                                Toast.makeText(getApplicationContext(),"Login success",Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                                progressDialog.dismiss();
-                            }
+                                if(user.getPassword().equals(pass))
+                                {
+                                    textView_error.setText(null);
+                                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                                    Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_SHORT).show();
+                                }
 
+                                else
+                                {
+                                    textView_error.setText("Wrong password");
+                                    Toast.makeText(getApplicationContext(),"Wrong password",Toast.LENGTH_SHORT).show();
+                                }
+                            }
                             else
                             {
-                                error.setText("No user existed");
-                                Toast.makeText(getApplicationContext(),"Login failed",Toast.LENGTH_SHORT).show();
-                                progressDialog.dismiss();
+                                textView_error.setText("User do not exist");
+                                Toast.makeText(getApplicationContext(),"User do not exist",Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
-                }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                };
+                mReference.addValueEventListener(listener);
             }
+
         });
     }
 }

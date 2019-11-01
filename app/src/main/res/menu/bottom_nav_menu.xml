@@ -2,17 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_menu"
-        android:title="@string/menu_title" />
+        android:title="@string/menu_title"
+        android:icon="@drawable/ic_fork"
+        />
+
     <item
         android:id="@+id/navigation_orders"
-        android:title="@string/orders_title" />
+        android:title="@string/orders_title"
+        android:icon="@drawable/ic_orders"
+        />
+
     <item
         android:id="@+id/navigation_tables"
-        android:title="@string/tables_title" />
+        android:title="@string/tables_title"
+        android:icon="@drawable/ic_tables"
+        />
+
     <item
         android:id="@+id/navigation_reservation"
-        android:title="@string/reservations_title" />
+        android:title="@string/reservations_title"
+        android:icon="@drawable/ic_reserve"
+        />
     <item
         android:id="@+id/navigation_members"
-        android:title="@string/members_title" />
+        android:title="@string/members_title"
+        android:icon="@drawable/ic_members"
+        />
 </menu>

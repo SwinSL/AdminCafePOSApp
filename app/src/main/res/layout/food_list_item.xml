@@ -17,9 +17,15 @@
             android:textSize="30sp"
             android:textAlignment="center"/>
 
+        <View
+            android:id="@+id/FVerticalLine"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#d3d3d3"/>
+
         <TextView
             android:id="@+id/f_price_text"
-            android:layout_width="237dp"
+            android:layout_width="235dp"
             android:layout_height="wrap_content"
             android:textSize="30sp"
             android:textColor="@android:color/black"

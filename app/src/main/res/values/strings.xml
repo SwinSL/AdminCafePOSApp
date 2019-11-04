@@ -3,16 +3,16 @@
     <string name="orders_title">Orders</string>
     <string name="menu_title">Menu</string>
     <string name="tables_title">Tables</string>
-    <string name="reservations_title">Reservations</string>
     <string name="members_title">Members</string>
-    <string name="reservation_id">Reservation ID:</string>
+    <string name="reservations_title">Reservations</string>
+    <string name="reservation_id">RESERVATION ID</string>
     <string name="table_no">Table No:</string>
-    <string name="date">Date:</string>
-    <string name="surname">Surname:</string>
-    <string name="time">Time:</string>
+    <string name="date">DATE</string>
+    <string name="surname">SURNAME</string>
+    <string name="time">TIME</string>
     <string name="remove_reservation">Remove Reservation</string>
     <string name="create_new_reservation">Create new Reservation</string>
-    <string name="no_of_people">No of People:</string>
+    <string name="no_of_people">NO OF PEOPLE</string>
     <string name="add_reservation">Add Reservation</string>
     <string name="table">Table</string>
     <string name="confirm">Confirm</string>
@@ -25,6 +25,20 @@
     <string name="number_of_seats">Number of Seats:</string>
     <string name="number_of_seat_popup">Number of Seat:</string>
     <string name="remove_table_popup">Remove Table</string>
+    <string name="add_drinks">ADD DRINKS</string>
+    <string name="remove_drinks">REMOVE DRINKS</string>
+    <string name="add_food">ADD FOOD</string>
+    <string name="remove_food">REMOVE FOOD</string>
+    <string name="register_member">REGISTER MEMBER</string>
+    <string name="remove_member">REMOVE MEMBER</string>
+    <string name="members">MEMBERS</string>
+    <string name="member_id">MEMBER ID</string>
+    <string name="member_name">MEMBER NAME</string>
+    <string name="food">FOOD</string>
+    <string name="beverages">BEVERAGES</string>
+    <string name="name">NAME</string>
+    <string name="price">PRICE</string>
+    <string name="reservations">RESERVATIONS</string>
 
 
 </resources>

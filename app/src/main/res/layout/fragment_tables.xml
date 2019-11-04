@@ -17,7 +17,7 @@
 
     <Button
         android:id="@+id/button_removeTable"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="300dp"
         android:layout_marginTop="21dp"
@@ -27,7 +27,7 @@
 
     <Button
         android:id="@+id/button_addTable"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="457dp"
         android:layout_marginTop="21dp"

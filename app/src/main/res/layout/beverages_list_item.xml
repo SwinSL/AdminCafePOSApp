@@ -14,7 +14,7 @@
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textAlignment="center"/>
 
         <View
@@ -27,7 +27,7 @@
             android:id="@+id/b_price_text"
             android:layout_width="237dp"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textColor="@android:color/black"
             android:textAlignment="center"/>
     </LinearLayout>

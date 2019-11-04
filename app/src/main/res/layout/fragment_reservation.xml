@@ -9,9 +9,10 @@
         android:id="@+id/reservationTitle"
         android:layout_width="1256dp"
         android:layout_height="wrap_content"
-        android:text="RESERVATIONS"
-        android:textSize="50sp"
+        android:text="@string/reservations"
+        android:textSize="40sp"
         android:textAlignment="center"
+        android:padding="5dp"
         android:textColor="@android:color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -43,7 +44,7 @@
             android:id="@+id/reservationIdTitle"
             android:layout_width="400dp"
             android:layout_height="wrap_content"
-            android:text="RESERVATION ID"
+            android:text="@string/reservation_id"
             android:textSize="25sp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
@@ -59,7 +60,7 @@
             android:id="@+id/reservationNoOfPeopleTitle"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:text="NO OF PEOPLE"
+            android:text="@string/no_of_people"
             android:textSize="25sp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
@@ -75,7 +76,7 @@
             android:id="@+id/reservationSurnameTitle"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="SURNAME"
+            android:text="@string/surname"
             android:textSize="25sp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
@@ -91,7 +92,7 @@
             android:id="@+id/reservationDateTitle"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:text="DATE"
+            android:text="@string/date"
             android:textSize="25sp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
@@ -107,7 +108,7 @@
             android:id="@+id/reservationTimeTitle"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="TIME"
+            android:text="@string/time"
             android:textSize="25sp"
             android:textAlignment="center"
             android:textColor="@android:color/black"
@@ -130,6 +131,7 @@
         app:layout_constraintTop_toBottomOf="@+id/reservationInfotitle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/textview_border"/>
 
     <RelativeLayout
@@ -142,7 +144,7 @@
 
     <Button
         android:id="@+id/removeReservationBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:text="@string/remove_reservation"
         android:layout_marginStart="150dp"
@@ -151,7 +153,7 @@
 
     <Button
         android:id="@+id/createReservationBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:text="@string/create_new_reservation"
         android:layout_marginEnd="150dp"

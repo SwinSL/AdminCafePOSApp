@@ -1,6 +1,7 @@
 package com.example.admincafeposapp.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
@@ -31,7 +33,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Objects;
 
 public class ReservationFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -99,7 +105,7 @@ public class ReservationFragment extends Fragment {
             surname_options.add(reservation.getCustomer_surname());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, surname_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, surname_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         removeReservation_surname_spinner.setAdapter(adapter);
 
@@ -125,8 +131,9 @@ public class ReservationFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
-                            for(DocumentSnapshot document: task.getResult()){
+                            for(DocumentSnapshot document: Objects.requireNonNull(task.getResult())){
                                 Reservation reservation = document.toObject(Reservation.class);
+                                assert reservation != null;
                                 if(reservation.getCustomer_surname().equals(surname) && reservation.getTable_no().equals(tableNo) && reservation.getDate().equals(date) && reservation.getTime().equals(time)){
                                     collectionReference.document(document.getId()).delete();
                                 }
@@ -157,7 +164,7 @@ public class ReservationFragment extends Fragment {
                 date_options.add(reservation.getDate());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, date_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, date_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         removeReservation_date_spinner.setAdapter(adapter);
 
@@ -179,7 +186,7 @@ public class ReservationFragment extends Fragment {
                 time_options.add(reservation.getTime());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, time_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, time_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         removeReservation_time_spinner.setAdapter(adapter);
 
@@ -201,7 +208,7 @@ public class ReservationFragment extends Fragment {
                 table_options.add(reservation.getTable_no());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, table_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, table_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         removeReservation_tableNo_spinner.setAdapter(adapter);
     }
@@ -224,6 +231,7 @@ public class ReservationFragment extends Fragment {
         addReservation_date_editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                displayDatePicker();
                 if(!addReservation_date_editText.getText().toString().isEmpty()){
                     getAddReservationTimeOptions(addReservation_date_editText.getText().toString());
                 }
@@ -264,6 +272,33 @@ public class ReservationFragment extends Fragment {
 
     }
 
+    private void displayDatePicker(){
+        final Calendar myCalendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "d MMMM Y";
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                addReservation_date_editText.setText(sdf.format(myCalendar.getTime()));
+                getAddReservationTimeOptions(addReservation_date_editText.getText().toString());
+            }
+
+        };
+
+        DatePickerDialog datepickerDialog = new DatePickerDialog(Objects.requireNonNull(getContext()), date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH));
+
+        datepickerDialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis());
+        datepickerDialog.getDatePicker().setMaxDate((myCalendar.getTimeInMillis() + 1000L*60*60*24*30));
+        datepickerDialog.show();
+    }
+
     private boolean validateAddFields() {
         return !(addReservation_surname_editText.getText().toString().isEmpty() || addReservation_noOfPeople_editText.getText().toString().isEmpty() || addReservation_date_editText.getText().toString().isEmpty() || addReservation_time_spinner.getSelectedItem().toString().isEmpty() || addReservation_tableNo_spinner.getSelectedItem().toString().isEmpty());
     }
@@ -275,7 +310,7 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
-                    for(DocumentSnapshot document: task.getResult()){
+                    for(DocumentSnapshot document: Objects.requireNonNull(task.getResult())){
                         Reservation reservation = document.toObject(Reservation.class);
                         reservationArrayList.add(reservation);
                     }
@@ -298,7 +333,7 @@ public class ReservationFragment extends Fragment {
         time_options.add("8:30PM");
         time_options.add("9:00PM");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, time_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, time_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         addReservation_time_spinner.setAdapter(adapter);
     }
@@ -318,7 +353,7 @@ public class ReservationFragment extends Fragment {
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.reservation_spinner_item, table_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, table_options);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         addReservation_tableNo_spinner.setAdapter(adapter);
     }

@@ -1,5 +1,7 @@
 package com.example.admincafeposapp.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -134,7 +136,7 @@ public class TablesFragment extends Fragment {
                     String tableStatus = editText_tableStatus.getText().toString();
 
                     Tables tables = new Tables(tableNumber, numberOfSeat, tableStatus);
-                    tableCollectionReference.document().set(tables);
+                    tableCollectionReference.document(tableNumber).set(tables);
                     readTablesFromDatabase();
 
                     Toast.makeText(getContext(),"New Tables is added Successfully!", Toast.LENGTH_LONG).show();
@@ -168,40 +170,56 @@ public class TablesFragment extends Fragment {
         button_tableRemoveConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!editText_removeTableNumber.getText().toString().isEmpty())
-                {
-                    final String tableNoRemove = editText_removeTableNumber.getText().toString();
 
-                    tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful())
-                            {
-                                for(DocumentSnapshot document: task.getResult())
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                builder.setTitle("Remove Table")
+                        .setMessage("Are you sure you want remove this table?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                if(!editText_removeTableNumber.getText().toString().isEmpty())
                                 {
-                                    Tables tables = document.toObject(Tables.class);
-                                    if(tables.getTableNo().equals(tableNoRemove))
-                                    {
-                                        tableCollectionReference.document(document.getId()).delete();
-                                        Toast.makeText(getContext(),"Tables Number: " + tableNoRemove + "is removed!", Toast.LENGTH_LONG).show();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(getContext(),"Please enter valid Table Number", Toast.LENGTH_SHORT).show();
-                                    }
+                                    final String tableNoRemove = editText_removeTableNumber.getText().toString();
+
+                                    tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.isSuccessful())
+                                            {
+                                                for(DocumentSnapshot document: task.getResult())
+                                                {
+                                                    Tables tables = document.toObject(Tables.class);
+                                                    if(tables.getTableNo().equals(tableNoRemove))
+                                                    {
+                                                        tableCollectionReference.document(document.getId()).delete();
+                                                        Toast.makeText(getContext(),"Tables Number: " + tableNoRemove + "is removed!", Toast.LENGTH_LONG).show();
+                                                    }
+                                                    else
+                                                    {
+                                                        Toast.makeText(getContext(),"Please enter valid Table Number", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                readTablesFromDatabase();
+                                            }
+                                        }
+                                    });
+
+
+                                    popupWindow.dismiss();
                                 }
-                                readTablesFromDatabase();
+                                else
+                                {
+                                    Toast.makeText(getContext(),"Please enter Table Number", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
+
+                builder.show();
 
 
-                    popupWindow.dismiss();
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Please enter Table Number", Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }

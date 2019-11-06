@@ -42,7 +42,7 @@
             android:background="@android:color/black" />
         <TextView
             android:id="@+id/reservationIdTitle"
-            android:layout_width="400dp"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:text="@string/reservation_id_upper"
             android:textSize="25sp"
@@ -58,7 +58,7 @@
             android:background="@android:color/black" />
         <TextView
             android:id="@+id/reservationNoOfPeopleTitle"
-            android:layout_width="250dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="@string/no_of_people_upper"
             android:textSize="25sp"
@@ -90,7 +90,7 @@
             android:background="@android:color/black" />
         <TextView
             android:id="@+id/reservationDateTitle"
-            android:layout_width="250dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="@string/date_upper"
             android:textSize="25sp"
@@ -117,6 +117,22 @@
 
         <View
             android:id="@+id/reservationtitleline6"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+        <TextView
+            android:id="@+id/reservationTableNoTitle"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/table_no_upper"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+
+            />
+
+        <View
+            android:id="@+id/reservationtitleline7"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@android:color/black" />

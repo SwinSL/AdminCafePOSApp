@@ -282,7 +282,7 @@ public class ReservationFragment extends Fragment {
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                String myFormat = "d MMMM Y";
+                String myFormat = "d MMM Y";
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 addReservation_date_editText.setText(sdf.format(myCalendar.getTime()));
                 getAddReservationTimeOptions(addReservation_date_editText.getText().toString());

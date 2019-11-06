@@ -45,6 +45,7 @@
     <string name="date_upper">DATE</string>
     <string name="time_upper">TIME</string>
     <string name="_1_2_3_etc">1, 2, 3, etc</string>
+    <string name="table_no_upper">TABLE NO.</string>
 
 
 </resources>

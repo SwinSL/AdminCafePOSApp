@@ -1,7 +1,9 @@
 package com.example.admincafeposapp.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -127,24 +129,36 @@ public class ReservationFragment extends Fragment {
                     final String date = removeReservation_date_spinner.getSelectedItem().toString();
                     final String time = removeReservation_time_spinner.getSelectedItem().toString();
 
-                    collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for(DocumentSnapshot document: Objects.requireNonNull(task.getResult())){
-                                Reservation reservation = document.toObject(Reservation.class);
-                                assert reservation != null;
-                                if(reservation.getCustomer_surname().equals(surname) && reservation.getTable_no().equals(tableNo) && reservation.getDate().equals(date) && reservation.getTime().equals(time)){
-                                    collectionReference.document(document.getId()).delete();
-                                }
-                            }
-                            getReservations();
-                        }
-                        }
-                    });
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-                    Toast.makeText(getContext(),"Reservation removed successfully!", Toast.LENGTH_LONG).show();
-                    popupWindow.dismiss();
+                    builder.setTitle("Remove Reservation")
+                            .setMessage("Are you sure you want remove this reservation?")
+                            .setNegativeButton("No", null)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if(task.isSuccessful()){
+                                                        for(DocumentSnapshot document: Objects.requireNonNull(task.getResult())){
+                                                            Reservation reservation = document.toObject(Reservation.class);
+                                                            assert reservation != null;
+                                                            if(reservation.getCustomer_surname().equals(surname) && reservation.getTable_no().equals(tableNo) && reservation.getDate().equals(date) && reservation.getTime().equals(time)){
+                                                                collectionReference.document(document.getId()).delete();
+                                                            }
+                                                        }
+                                                        getReservations();
+                                                    }
+                                                }
+                                            });
+
+                                            Toast.makeText(getContext(),"Reservation removed successfully!", Toast.LENGTH_LONG).show();
+                                            popupWindow.dismiss();
+                                        }
+                                    });
+                            builder.show();
+
                 }else{
                     Toast.makeText(getContext(),"Please complete the fields.", Toast.LENGTH_SHORT).show();
                 }
@@ -282,7 +296,7 @@ public class ReservationFragment extends Fragment {
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                String myFormat = "d MMMM Y";
+                String myFormat = "d MMM Y";
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 addReservation_date_editText.setText(sdf.format(myCalendar.getTime()));
                 getAddReservationTimeOptions(addReservation_date_editText.getText().toString());

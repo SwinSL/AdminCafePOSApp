@@ -40,7 +40,7 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
         holder.reservation_date.setText(reservation.getDate());
         holder.reservation_time.setText(reservation.getTime());
         holder.reservation_noOfPeople.setText(String.valueOf(reservation.getNoOfPeople()));
-
+        holder.reservation_tableNo.setText(reservation.getTable_no());
     }
 
     @Override
@@ -48,11 +48,11 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
         return reservationList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView reservation_id, reservation_surname, reservation_date, reservation_time, reservation_noOfPeople;
+    class ViewHolder extends RecyclerView.ViewHolder{
+        private TextView reservation_id, reservation_surname, reservation_date, reservation_time, reservation_noOfPeople, reservation_tableNo;
         private View view;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             view = itemView;
             reservation_id = itemView.findViewById(R.id.textview_reservationId_data);
@@ -60,6 +60,7 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
             reservation_date = itemView.findViewById(R.id.textview_reservationDate_data);
             reservation_time = itemView.findViewById(R.id.textview_reservationTime_data);
             reservation_noOfPeople = itemView.findViewById(R.id.textview_reservationNoOfPeople_data);
+            reservation_tableNo = itemView.findViewById(R.id.textview_reservationTableNo_data);
         }
     }
 }

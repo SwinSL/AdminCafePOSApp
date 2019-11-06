@@ -1,5 +1,7 @@
 package com.example.admincafeposapp.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -234,40 +236,53 @@ public class MenuFragment extends Fragment{
         deleteFoodBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!editDeleteFoodName.getText().toString().isEmpty())
-                {
-                    final String foodRemove = editDeleteFoodName.getText().toString();
 
-                    firestore.collection("Food").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful())
-                            {
-                                for(DocumentSnapshot document: task.getResult())
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                builder.setTitle("Remove Food")
+                        .setMessage("Are you sure you want remove this food?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if(!editDeleteFoodName.getText().toString().isEmpty())
                                 {
-                                    Food food = document.toObject(Food.class);
-                                    if(food.getItem_name().equals(foodRemove))
-                                    {
-                                        firestore.collection("Food").document(document.getId()).delete();
-                                        Toast.makeText(getContext(),foodRemove + " deleted", Toast.LENGTH_LONG).show();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED FOOD NAME", Toast.LENGTH_SHORT).show();
-                                    }
+                                    final String foodRemove = editDeleteFoodName.getText().toString();
+
+                                    firestore.collection("Food").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.isSuccessful())
+                                            {
+                                                for(DocumentSnapshot document: task.getResult())
+                                                {
+                                                    Food food = document.toObject(Food.class);
+                                                    if(food.getItem_name().equals(foodRemove))
+                                                    {
+                                                        firestore.collection("Food").document(document.getId()).delete();
+                                                        Toast.makeText(getContext(),foodRemove + " deleted", Toast.LENGTH_LONG).show();
+                                                    }
+                                                    else
+                                                    {
+                                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED FOOD NAME", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                readFoodBeveragesFromDatabase();
+                                            }
+                                        }
+                                    });
+
+
+                                    popupWindow.dismiss();
                                 }
-                                readFoodBeveragesFromDatabase();
+                                else
+                                {
+                                    Toast.makeText(getContext(),"PLEASE ENTER A FOOD NAME", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
+                builder.show();
 
-
-                    popupWindow.dismiss();
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"PLEASE ENTER A FOOD NAME", Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }
@@ -287,40 +302,56 @@ public class MenuFragment extends Fragment{
         deleteBeveragesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!editDeleteBeveragesName.getText().toString().isEmpty())
-                {
-                    final String beveragesRemove = editDeleteBeveragesName.getText().toString();
 
-                    firestore.collection("Drink").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful())
-                            {
-                                for(DocumentSnapshot document: task.getResult())
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                builder.setTitle("Remove Beverages")
+                        .setMessage("Are you sure you want remove this beverages?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if(!editDeleteBeveragesName.getText().toString().isEmpty())
                                 {
-                                    Beverages beverages = document.toObject(Beverages.class);
-                                    if(beverages.getItem_name().equals(beveragesRemove))
-                                    {
-                                        firestore.collection("Drink").document(document.getId()).delete();
-                                        Toast.makeText(getContext(),beveragesRemove + " deleted", Toast.LENGTH_LONG).show();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED BEVERAGE NAME", Toast.LENGTH_SHORT).show();
-                                    }
+
+
+                                    final String beveragesRemove = editDeleteBeveragesName.getText().toString();
+
+                                    firestore.collection("Drink").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.isSuccessful())
+                                            {
+                                                for(DocumentSnapshot document: task.getResult())
+                                                {
+                                                    Beverages beverages = document.toObject(Beverages.class);
+                                                    if(beverages.getItem_name().equals(beveragesRemove))
+                                                    {
+                                                        firestore.collection("Drink").document(document.getId()).delete();
+                                                        Toast.makeText(getContext(),beveragesRemove + " deleted", Toast.LENGTH_LONG).show();
+                                                    }
+                                                    else
+                                                    {
+                                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED BEVERAGE NAME", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                readFoodBeveragesFromDatabase();
+                                            }
+                                        }
+                                    });
+
+
+                                    popupWindow.dismiss();
                                 }
-                                readFoodBeveragesFromDatabase();
+                                else
+                                {
+                                    Toast.makeText(getContext(),"PLEASE ENTER A BEVERAGE NAME", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
+                builder.show();
 
 
-                    popupWindow.dismiss();
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"PLEASE ENTER A BEVERAGE NAME", Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }

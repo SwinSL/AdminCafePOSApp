@@ -1,52 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/tableTitle"
+        android:layout_width="904dp"
+        android:layout_height="wrap_content"
+        android:text="TABLES"
+        android:textSize="40sp"
+        android:padding="5dp"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <View
+        android:id="@+id/tabletitlelinetop"
+        android:layout_width="904dp"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/tableTitle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/tableInfotitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tabletitlelinetop"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <View
+            android:id="@+id/tabletitleline1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+        <TextView
+            android:id="@+id/tableNoTitle"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="TABLE NUMBER"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:textColor="@android:color/black" />
+
+        <View
+            android:id="@+id/tabletitleline"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
+        <TextView
+            android:id="@+id/tableNoOfSeatsTitle"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="NUMBER OF SEATS"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"/>
+
+        <View
+            android:id="@+id/tabletitleline3"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
+        <TextView
+            android:id="@+id/tableStatusTitle"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="TABLE STATUS"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"/>
+
+        <View
+            android:id="@+id/tabletitleline4"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_table"
-        android:layout_width="match_parent"
-        android:layout_height="550dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="904dp"
+        android:layout_height="450dp"
+        app:layout_constraintTop_toBottomOf="@+id/tableInfotitle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/textview_border"/>
 
-    <Button
-        android:id="@+id/button_removeTable"
-        android:layout_width="200dp"
+    <RelativeLayout
+        android:id="@+id/rbuttons"
+        android:layout_width="904dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="300dp"
-        android:layout_marginTop="21dp"
-        android:text="@string/remove_table"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline3" />
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView_table"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"  >
 
-    <Button
-        android:id="@+id/button_addTable"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="457dp"
-        android:layout_marginTop="21dp"
-        android:layout_marginEnd="300dp"
-        android:text="@string/add_table"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button_removeTable"
-        app:layout_constraintTop_toBottomOf="@+id/guideline3" />
+        <Button
+            android:id="@+id/button_removeTable"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="REMOVE TABLE"
+            android:layout_marginStart="100dp"
+            android:layout_alignParentStart="true"
+            />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="608dp"
-        android:layout_marginEnd="1279dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_begin="535dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/button_addTable"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="ADD TABLE"
+            android:layout_marginEnd="100dp"
+            android:layout_alignParentEnd="true"
+            />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

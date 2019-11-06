@@ -37,7 +37,7 @@
     <string name="food">FOOD</string>
     <string name="beverages">BEVERAGES</string>
     <string name="name">NAME</string>
-    <string name="price">PRICE</string>
+    <string name="price">PRICE (RM)</string>
     <string name="reservations">RESERVATIONS</string>
     <string name="reservation_id_upper">RESERVATION ID</string>
     <string name="no_of_people_upper">NO OF PEOPLE</string>

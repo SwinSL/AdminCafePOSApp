@@ -31,7 +31,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
     public void onBindViewHolder(FoodListAdapter.ViewHolder holder, int position) {
 
         holder.nameText.setText(foodList.get(position).getItem_name());
-        holder.priceText.setText(String.valueOf(foodList.get(position).getItem_price()));
+        holder.priceText.setText(String.format("%.2f", foodList.get(position).getItem_price()));
     }
 
     @Override

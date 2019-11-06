@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
             android:textSize="25sp"
+            android:fontFamily="@font/raleway"
             android:textAlignment="center"/>
 
         <View
@@ -29,6 +30,7 @@
             android:layout_height="wrap_content"
             android:textSize="25sp"
             android:textColor="@android:color/black"
+            android:fontFamily="@font/raleway"
             android:textAlignment="center"/>
     </LinearLayout>
 

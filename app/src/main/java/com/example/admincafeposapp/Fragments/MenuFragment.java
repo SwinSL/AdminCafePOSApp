@@ -1,53 +1,47 @@
 package com.example.admincafeposapp.Fragments;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Layout;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.admincafeposapp.Model.Beverages;
-import com.example.admincafeposapp.Model.BeveragesDialog;
 import com.example.admincafeposapp.Model.BeveragesListAdapter;
-import com.example.admincafeposapp.Model.BeveragesRemoveDialog;
 import com.example.admincafeposapp.Model.Food;
-import com.example.admincafeposapp.Model.FoodDialog;
 import com.example.admincafeposapp.Model.FoodListAdapter;
-import com.example.admincafeposapp.Model.FoodRemoveDialog;
 import com.example.admincafeposapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MenuFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class MenuFragment extends Fragment{
 
-    private static final String TAG = "FireLog";
-    RecyclerView foodListView, beveragesListView;
-    private FirebaseFirestore firestore;
-    private List<Food> foodList;
-    private List<Beverages> beveragesList;
+    private RecyclerView foodListView, beveragesListView;
     private FoodListAdapter foodListAdapter;
     private BeveragesListAdapter beveragesListAdapter;
-    private Button foodAddBtn, foodDelBtn, beveragesAddBtn, beveragesDelBtn;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private ArrayList<Food> foodList;
+    private ArrayList<Beverages> beveragesList;
+
+    private FirebaseFirestore firestore;
+
+    private EditText editAddFoodName, editAddFoodPrice, editAddBeveragesName, editAddBeveragesPrice, editDeleteFoodName, editDeleteBeveragesName;
+    private Button addFoodBtn, deleteFoodBtn, addBeveragesBtn, deleteBeveragesBtn, addConfirmFoodBtn, addConfirmBeveragesBtn, deleteConfirmFoodBtn, deleteConfirmBeveragesBtn;
 
     @Nullable
     @Override
@@ -58,8 +52,16 @@ public class MenuFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        firestore = FirebaseFirestore.getInstance();
+
+        addFoodBtn = view.findViewById(R.id.faddButton);
+        deleteFoodBtn = view.findViewById(R.id.fdeleteButton);
+        addBeveragesBtn = view.findViewById(R.id.baddButton);
+        deleteBeveragesBtn = view.findViewById(R.id.bdeleteButton);
+
         foodList = new ArrayList<>();
         beveragesList = new ArrayList<>();
+        readFoodBeveragesFromDatabase();
 
         foodListView = view.findViewById(R.id.foodList);
         foodListView.setHasFixedSize(true);
@@ -73,87 +75,55 @@ public class MenuFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         beveragesListAdapter = new BeveragesListAdapter(this.getContext(), beveragesList);
         beveragesListView.setAdapter(beveragesListAdapter);
 
-        foodAddBtn = view.findViewById(R.id.faddButton);
-        foodAddBtn.setOnClickListener(new View.OnClickListener() {
+        addFoodBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFoodDialog();
+                PopupAddFood();
             }
         });
 
-        beveragesAddBtn = view.findViewById(R.id.baddButton);
-        beveragesAddBtn.setOnClickListener(new View.OnClickListener() {
+        addBeveragesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBeverageDialog();
+                PopupAddBeverages();
             }
         });
 
-        beveragesDelBtn = view.findViewById(R.id.bdeleteButton);
-        beveragesDelBtn.setOnClickListener(new View.OnClickListener() {
+        deleteBeveragesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openRemoveBeverageDialog();
+                PopupRemoveBeverages();
             }
         });
 
-        foodDelBtn = view.findViewById(R.id.fdeleteButton);
-        foodDelBtn.setOnClickListener(new View.OnClickListener() {
+        deleteFoodBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openRemoveFoodDialog();
+                PopupRemoveFood();
             }
         });
 
-        swipeRefreshLayout = view.findViewById(R.id.List);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        firestore = FirebaseFirestore.getInstance();
-        getData();
+
     }
 
-    public void openFoodDialog()
+    public void readFoodBeveragesFromDatabase()
     {
-        FoodDialog foodDialog = new FoodDialog();
-        foodDialog.show(getActivity().getSupportFragmentManager(), "Food Dialog");
-    }
-
-    public void openBeverageDialog()
-    {
-        BeveragesDialog beveragesDialog = new BeveragesDialog();
-        beveragesDialog.show(getActivity().getSupportFragmentManager(), "Beverage Dialog");
-    }
-
-    public void openRemoveBeverageDialog()
-    {
-        BeveragesRemoveDialog beveragesRemoveDialog = new BeveragesRemoveDialog();
-        beveragesRemoveDialog.show(getActivity().getSupportFragmentManager(), "Beverage Remove Dialog");
-    }
-
-    public void openRemoveFoodDialog()
-    {
-        FoodRemoveDialog foodRemoveDialog = new FoodRemoveDialog();
-        foodRemoveDialog.show(getActivity().getSupportFragmentManager(), "Food Remove Dialog");
-    }
-
-    public void getData()
-    {
+        foodList.clear();
         firestore.collection("Food").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     foodList.clear();
-                    for(DocumentSnapshot document: task.getResult()){
+                    for (DocumentSnapshot document : task.getResult()) {
                         Food food = document.toObject(Food.class);
                         foodList.add(food);
-                        foodListAdapter.notifyDataSetChanged();
-
-                        Log.d("TAG", food.getItem_name());
-                        Log.d("TAG", String.valueOf(food.getItem_price()));
                     }
+                    foodListAdapter.notifyDataSetChanged();
                 }
             }
         });
 
+        beveragesList.clear();
         firestore.collection("Drink").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -162,20 +132,196 @@ public class MenuFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     for(DocumentSnapshot document: task.getResult()){
                         Beverages beverages = document.toObject(Beverages.class);
                         beveragesList.add(beverages);
-                        beveragesListAdapter.notifyDataSetChanged();
-
-                        Log.d("TAG", beverages.getItem_name());
-                        Log.d("TAG", String.valueOf(beverages.getItem_price()));
                     }
+                    beveragesListAdapter.notifyDataSetChanged();
                 }
             }
         });
-
-        swipeRefreshLayout.setRefreshing(false);
     }
 
-    @Override
-    public void onRefresh() {
-        getData();
+    public void PopupAddFood()
+    {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.add_food_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        editAddFoodName = view.findViewById(R.id.addFoodNameFill);
+        editAddFoodPrice = view.findViewById(R.id.addFoodPriceFill);
+        addConfirmFoodBtn = view.findViewById(R.id.button_confirmAddFood);
+
+        addConfirmFoodBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(validateAddFoodFields())
+                {
+                    String addedFoodName = editAddFoodName.getText().toString();
+                    Double addedFoodPrice = Double.parseDouble(editAddFoodPrice.getText().toString());
+
+                    Food food = new Food(addedFoodName, addedFoodPrice);
+                    firestore.collection("Food").document(addedFoodName).set(food);
+                    readFoodBeveragesFromDatabase();
+
+                    Toast.makeText(getContext(),addedFoodName + " is added", Toast.LENGTH_LONG).show();
+                    popupWindow.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"PLEASE DO NOT LEAVE ANY FIELD BLANK", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private boolean validateAddFoodFields() {
+        return !(editAddFoodName.getText().toString().isEmpty() || editAddFoodPrice.getText().toString().isEmpty());
+    }
+
+    public void PopupAddBeverages()
+    {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.add_beverages_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        editAddBeveragesName = view.findViewById(R.id.addBeveragesNameFill);
+        editAddBeveragesPrice = view.findViewById(R.id.addBeveragesPriceFill);
+        addConfirmBeveragesBtn = view.findViewById(R.id.button_confirmAddBeverages);
+
+        addConfirmBeveragesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(validateAddBeveragesFields())
+                {
+                    String addedBeveragesName = editAddBeveragesName.getText().toString();
+                    Double addedBeveragesPrice = Double.parseDouble(editAddBeveragesPrice.getText().toString());
+
+                    Beverages beverages = new Beverages(addedBeveragesName, addedBeveragesPrice);
+                    firestore.collection("Drink").document(addedBeveragesName).set(beverages);
+                    readFoodBeveragesFromDatabase();
+
+                    Toast.makeText(getContext(),addedBeveragesName + " is added", Toast.LENGTH_LONG).show();
+                    popupWindow.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"PLEASE DO NOT LEAVE ANY FIELD BLANK", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private boolean validateAddBeveragesFields() {
+        return !(editAddBeveragesName.getText().toString().isEmpty() || editAddBeveragesPrice.getText().toString().isEmpty());
+    }
+
+    private void PopupRemoveFood(){
+
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.delete_food_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        editDeleteFoodName = view.findViewById(R.id.deleteFoodNameFill);
+        deleteFoodBtn = view.findViewById(R.id.button_confirmDeleteFood);
+
+        deleteFoodBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!editDeleteFoodName.getText().toString().isEmpty())
+                {
+                    final String foodRemove = editDeleteFoodName.getText().toString();
+
+                    firestore.collection("Food").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful())
+                            {
+                                for(DocumentSnapshot document: task.getResult())
+                                {
+                                    Food food = document.toObject(Food.class);
+                                    if(food.getItem_name().equals(foodRemove))
+                                    {
+                                        firestore.collection("Food").document(document.getId()).delete();
+                                        Toast.makeText(getContext(),foodRemove + " deleted", Toast.LENGTH_LONG).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED FOOD NAME", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                readFoodBeveragesFromDatabase();
+                            }
+                        }
+                    });
+
+
+                    popupWindow.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"PLEASE ENTER A FOOD NAME", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void PopupRemoveBeverages(){
+
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.delete_beverages_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        editDeleteBeveragesName = view.findViewById(R.id.deleteBeveragesNameFill);
+        deleteBeveragesBtn = view.findViewById(R.id.button_confirmDeleteBeverages);
+
+        deleteBeveragesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!editDeleteBeveragesName.getText().toString().isEmpty())
+                {
+                    final String beveragesRemove = editDeleteBeveragesName.getText().toString();
+
+                    firestore.collection("Drink").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful())
+                            {
+                                for(DocumentSnapshot document: task.getResult())
+                                {
+                                    Beverages beverages = document.toObject(Beverages.class);
+                                    if(beverages.getItem_name().equals(beveragesRemove))
+                                    {
+                                        firestore.collection("Drink").document(document.getId()).delete();
+                                        Toast.makeText(getContext(),beveragesRemove + " deleted", Toast.LENGTH_LONG).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED BEVERAGE NAME", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                readFoodBeveragesFromDatabase();
+                            }
+                        }
+                    });
+
+
+                    popupWindow.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"PLEASE ENTER A BEVERAGE NAME", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

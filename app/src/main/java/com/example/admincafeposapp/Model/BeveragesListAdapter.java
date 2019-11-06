@@ -31,7 +31,7 @@ public class BeveragesListAdapter extends RecyclerView.Adapter<BeveragesListAdap
     @Override
     public void onBindViewHolder(BeveragesListAdapter.ViewHolder holder, int position) {
         holder.nameText.setText(beveragesList.get(position).getItem_name());
-        holder.priceText.setText(String.valueOf(beveragesList.get(position).getItem_price()));
+        holder.priceText.setText(String.format("%.2f", beveragesList.get(position).getItem_price()));
     }
 
     @Override

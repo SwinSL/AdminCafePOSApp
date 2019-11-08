@@ -1,18 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_bright">
+<androidx.constraintlayout.widget.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/print_btn"
-        android:layout_width="wrap_content"
+<TextView
+    android:id="@+id/transactionsTitle"
+    android:layout_width="904dp"
+    android:layout_height="wrap_content"
+    android:text="TRANSACTIONS"
+    android:textSize="40sp"
+    android:padding="5dp"
+    android:textAlignment="center"
+    android:textColor="@android:color/black"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"/>
+
+<View
+    android:id="@+id/transactionstitlelinetop"
+    android:layout_width="904dp"
+    android:layout_height="1dp"
+    android:background="@android:color/black"
+    app:layout_constraintTop_toBottomOf="@id/transactionsTitle"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"/>
+
+<LinearLayout
+    android:id="@+id/transactionsInfotitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@id/transactionstitlelinetop"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent">
+
+    <View
+        android:id="@+id/transactionstitleline1"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/transactionsIdTitle"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Print"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:text="ORDER ID"
+        android:textSize="25sp"
+        android:textAlignment="center"
+        android:textColor="@android:color/black" />
+
+    <View
+        android:id="@+id/transactionstitleline"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/transactionsTableNoTitle"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="TABLE NO"
+        android:textSize="25sp"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"/>
+
+    <View
+        android:id="@+id/transactionstitleline3"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/transactionsStatusTitle"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="STATUS"
+        android:textSize="25sp"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"/>
+
+    <View
+        android:id="@+id/transactionstitleline4"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+
+</LinearLayout>
+
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/transactions_recyclerview"
+    android:layout_width="904dp"
+    android:layout_height="500dp"
+    app:layout_constraintTop_toBottomOf="@+id/transactionsInfotitle"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    android:background="@drawable/textview_border"/>
+
+<Button
+    android:id="@+id/print_btn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Print"
+    android:layout_marginEnd="20dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.example.admincafeposapp.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +33,9 @@ public class TransactionsRecyclerViewAdapter extends RecyclerView.Adapter<Transa
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         holder.order_id.setText(orderList.get(position).getOrder_id());
         holder.table_no.setText(orderList.get(position).getTable_no());
-        holder.order_status.setText(orderList.get(position).getOrder_status());
+        holder.order_status.setText("Paid");
     }
 
     @Override

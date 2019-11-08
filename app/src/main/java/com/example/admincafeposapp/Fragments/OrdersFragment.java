@@ -1,14 +1,21 @@
 package com.example.admincafeposapp.Fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +23,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.admincafeposapp.Adapters.TransactionsRecyclerViewAdapter;
+import com.example.admincafeposapp.Model.Food;
 import com.example.admincafeposapp.Model.Order;
 import com.example.admincafeposapp.Model.Transaction;
 import com.example.admincafeposapp.R;
@@ -45,12 +56,15 @@ import java.util.Locale;
 public class OrdersFragment extends Fragment {
 
     private static final int STORAGE_CODE = 1000;
-    private Button btn;
+    private Button btn, deleteConfirmTransactionBtn, deleteTransactionBtn;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference orderCollectionRef = db.collection("Orders");
     private ArrayList<Order> myOrder = new ArrayList<>();
     private List<String> orderID = new ArrayList<>();
     private List<String> sales = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private TransactionsRecyclerViewAdapter transactionsRecyclerViewAdapter;
+    private EditText editDeleteTransactionId;
 
     @Nullable
     @Override
@@ -61,6 +75,22 @@ public class OrdersFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        recyclerView = view.findViewById(R.id.transactions_recyclerview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        transactionsRecyclerViewAdapter = new TransactionsRecyclerViewAdapter(this.getContext(), myOrder);
+        recyclerView.setAdapter(transactionsRecyclerViewAdapter);
+
+        getOrders();
+
+        deleteTransactionBtn = view.findViewById(R.id.transactiondeleteButton);
+        deleteTransactionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupRemoveTransaction();
+            }
+        });
 
         btn = view.findViewById(R.id.print_btn);
 
@@ -78,6 +108,92 @@ public class OrdersFragment extends Fragment {
                 }else{
                     savePDF();
                 }
+            }
+        });
+    }
+
+    private void getOrders(){
+        myOrder.clear();
+        orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(DocumentSnapshot document: task.getResult()){
+                        Order order = document.toObject(Order.class);
+                        if ((order.getIsPaid().equals(true)))
+                        {
+                            myOrder.add(order);
+                        }
+                        transactionsRecyclerViewAdapter.notifyDataSetChanged();
+
+                    }
+                }
+            }
+        });
+    }
+
+    private void PopupRemoveTransaction(){
+
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.remove_transactions_popup, null);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        editDeleteTransactionId = view.findViewById(R.id.deleteTransactionsIdFill);
+        deleteConfirmTransactionBtn = view.findViewById(R.id.button_confirmDeleteTransactions);
+
+        deleteConfirmTransactionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                builder.setTitle("Remove Transaction")
+                        .setMessage("Are you sure you want remove this transaction?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if(!editDeleteTransactionId.getText().toString().isEmpty())
+                                {
+                                    final String transactionRemove = editDeleteTransactionId.getText().toString();
+
+                                    orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if(task.isSuccessful())
+                                            {
+                                                for(DocumentSnapshot document: task.getResult())
+                                                {
+                                                    Order order = document.toObject(Order.class);
+                                                    if(order.getOrder_id().equals(transactionRemove))
+                                                    {
+                                                        orderCollectionRef.document(document.getId()).delete();
+                                                        Toast.makeText(getContext(),transactionRemove + " deleted", Toast.LENGTH_LONG).show();
+                                                    }
+                                                    else
+                                                    {
+                                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED TRANSACTION ID", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                getOrders();
+                                            }
+                                        }
+                                    });
+
+
+                                    popupWindow.dismiss();
+                                }
+                                else
+                                {
+                                    Toast.makeText(getContext(),"PLEASE ENTER A TRANSACTION ID", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                builder.show();
+
             }
         });
     }

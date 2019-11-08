@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -39,6 +38,7 @@ public class TablesFragment extends Fragment {
     private RecyclerView table_recyclerView;
     private TableRecyclerViewAdapter table_Adapter;
     private ArrayList<Tables> tablesArrayList;
+    private ArrayList<String> myTable = new ArrayList<>();
 
     //FireStore Database
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -131,16 +131,44 @@ public class TablesFragment extends Fragment {
 
                 if(validateAddFields())
                 {
-                    String tableNumber = editText_tableNumber.getText().toString();
-                    int numberOfSeat = Integer.parseInt(editText_numberOfSeat.getText().toString());
-                    String tableStatus = editText_tableStatus.getText().toString();
+                    final String tableNumber = editText_tableNumber.getText().toString();
+                    final int numberOfSeat = Integer.parseInt(editText_numberOfSeat.getText().toString());
+                    final String tableStatus = editText_tableStatus.getText().toString();
 
-                    Tables tables = new Tables(tableNumber, numberOfSeat, tableStatus);
-                    tableCollectionReference.document(tableNumber).set(tables);
-                    readTablesFromDatabase();
+                    tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful())
+                            {
+                                for(DocumentSnapshot document : task.getResult())
+                                {
+                                    Tables tables = document.toObject(Tables.class);
+                                    myTable.add(tableCollectionReference.document(tables.getTableNo()).getId());
+                                    System.out.println(myTable);
+                                }
 
-                    Toast.makeText(getContext(),"New Tables is added Successfully!", Toast.LENGTH_LONG).show();
-                    popupWindow.dismiss();
+                                for(int i = 0; i < myTable.size(); i++){
+                                    if(myTable.contains(tableNumber))
+                                    {
+                                        Toast.makeText(getContext(),"This table already Exist", Toast.LENGTH_LONG).show();
+                                    }
+                                    else
+                                    {
+                                        Tables tables1 = new Tables(tableNumber, numberOfSeat, tableStatus);
+                                        tableCollectionReference.document(tableNumber).set(tables1);
+
+                                        Toast.makeText(getContext(),"New Tables is added Successfully!", Toast.LENGTH_LONG).show();
+                                        popupWindow.dismiss();
+                                    }
+                                }
+
+                                readTablesFromDatabase();
+                            }
+                        }
+                    });
+
+
+
                 }
                 else
                 {

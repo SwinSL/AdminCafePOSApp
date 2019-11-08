@@ -46,6 +46,7 @@ public class MembersFragment extends Fragment{
 
     private  FirebaseDatabase memberdb;
     private  DatabaseReference databaseReference;
+    private String myMember;
 
     private MemberAdapter.recyclerListener listener = new MemberAdapter.recyclerListener() {
         @Override
@@ -53,7 +54,7 @@ public class MembersFragment extends Fragment{
             layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
             constraintLayout = container.findViewById(R.id.constraint);
-            popupWindow = new PopupWindow(container, 400, 400, true);
+            popupWindow = new PopupWindow(container, 400, WindowManager.LayoutParams.WRAP_CONTENT, true);
             popupWindow.showAtLocation(constraintLayout,Gravity.CENTER,0,0);
             btn_confirm = container.findViewById(R.id.button_confirm);
             title = container.findViewById(R.id.tv_title);
@@ -181,122 +182,137 @@ public class MembersFragment extends Fragment{
         @Override
         public void onClick(View view) {
 
-                layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
-                constraintLayout = container.findViewById(R.id.constraint);
-                popupWindow = new PopupWindow(container, 400, WindowManager.LayoutParams.WRAP_CONTENT, true);
-                popupWindow.showAtLocation(constraintLayout,Gravity.CENTER,0,0);
-                btn_confirm = container.findViewById(R.id.button_confirm);
-                title = container.findViewById(R.id.tv_title);
-                switch (view.getId())
-                {
-                    case R.id.button_register:
-                        btn_confirm.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                memID = container.findViewById(R.id.et_id);
-                                memName = container.findViewById(R.id.et_name);
+            layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.member_add,null);
+            constraintLayout = container.findViewById(R.id.constraint);
+            popupWindow = new PopupWindow(container, 400, WindowManager.LayoutParams.WRAP_CONTENT, true);
+            popupWindow.showAtLocation(constraintLayout,Gravity.CENTER,0,0);
+            btn_confirm = container.findViewById(R.id.button_confirm);
+            title = container.findViewById(R.id.tv_title);
+            switch (view.getId())
+            {
+                case R.id.button_register:
+                    btn_confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            memID = container.findViewById(R.id.et_id);
+                            memName = container.findViewById(R.id.et_name);
 
-                                String key = databaseReference.push().getKey();
-                                String ID = memID.getText().toString();
-                                String Name = memName.getText().toString();
+                            final String key = databaseReference.push().getKey();
+                            final String ID = memID.getText().toString();
+                            final String Name = memName.getText().toString();
 
-                                if(TextUtils.isEmpty(ID))
-                                {
-                                    Toast.makeText(getContext(),"Please enter an ID", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                else if(TextUtils.isEmpty((Name)))
-                                {
-                                    Toast.makeText(getContext(),"Please enter name", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                else
-                                {
-                                    Members member = new Members(ID, Name);
-
-                                    databaseReference.child(key).setValue(member);
-
-                                    Toast.makeText(getContext(),"Successfully register member", Toast.LENGTH_SHORT).show();
-                                    popupWindow.dismiss();
-                                }
+                            if(TextUtils.isEmpty(ID))
+                            {
+                                Toast.makeText(getContext(),"Please enter an ID", Toast.LENGTH_SHORT).show();
+                                return;
                             }
-                        });
-                        break;
 
-                    case R.id.button_remove:
-                        title.setText("Remove member");
-                        btn_confirm.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                            else if(TextUtils.isEmpty((Name)))
+                            {
+                                Toast.makeText(getContext(),"Please enter name", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            else
+                            {
+                                final Query query = databaseReference.orderByChild("id").equalTo(ID);
 
-                                builder.setTitle("Remove Member")
-                                        .setMessage("Are you sure you want remove this member?")
-                                        .setNegativeButton("No", null)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
+                                        {
+                                            Members members = dataSnapshot1.getValue(Members.class);
 
-                                                memID = container.findViewById(R.id.et_id);
-                                                memName = container.findViewById(R.id.et_name);
+                                            myMember = members.getID();
 
-                                                final String ID = memID.getText().toString();
-                                                final String Name = memName.getText().toString();
-
-                                                if(TextUtils.isEmpty(ID))
-                                                {
-                                                    Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
-                                                    return;
-                                                }
-
-                                                else if(TextUtils.isEmpty(Name))
-                                                {
-                                                    Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
-                                                    return;
-                                                }
-
-                                                final Query query = databaseReference.orderByChild("id").equalTo(ID);
-
-                                                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                        for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
-                                                        {
-                                                            Members test = dataSnapshot1.getValue(Members.class);
-
-                                                            if(Name.equals(test.getName()))
-                                                            {
-                                                                dataSnapshot1.getRef().removeValue();
-                                                                Toast.makeText(getContext(),"Successfully delete member",Toast.LENGTH_LONG).show();
-                                                                popupWindow.dismiss();
-                                                            }
-
-                                                            else
-                                                            {
-                                                                Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
-                                                            }
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                    }
-                                                });
-
+                                            if(ID.equals(myMember))
+                                            {
+                                                Toast.makeText(getContext(),"Member ID already existed", Toast.LENGTH_SHORT).show();
+                                                popupWindow.dismiss();
                                             }
-                                        });
-                                builder.show();
+
+                                            else
+                                            {
+                                                Members member = new Members(ID, Name);
+
+                                                databaseReference.child(key).setValue(member);
+
+                                                Toast.makeText(getContext(),ID + "" + myMember, Toast.LENGTH_SHORT).show();
+                                                popupWindow.dismiss();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
-                        });
-                        break;
-                }
+                        }
+                    });
+                    break;
 
+                case R.id.button_remove:
+                    title.setText("Remove member");
+                    btn_confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            memID = container.findViewById(R.id.et_id);
+                            memName = container.findViewById(R.id.et_name);
 
+                            final String ID = memID.getText().toString();
+                            final String Name = memName.getText().toString();
+
+                            if(TextUtils.isEmpty(ID))
+                            {
+                                Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            else if(TextUtils.isEmpty(Name))
+                            {
+                                Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            final Query query = databaseReference.orderByChild("id").equalTo(ID);
+
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
+                                    {
+                                        Members test = dataSnapshot1.getValue(Members.class);
+
+                                        if(Name.equals(test.getName()))
+                                        {
+                                            dataSnapshot1.getRef().removeValue();
+                                            Toast.makeText(getContext(),"Successfully delete member",Toast.LENGTH_LONG).show();
+                                            popupWindow.dismiss();
+                                        }
+
+                                        else
+                                        {
+                                            Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+
+                        }
+                    });
+                    break;
             }
+
+
+        }
     };
 
 }

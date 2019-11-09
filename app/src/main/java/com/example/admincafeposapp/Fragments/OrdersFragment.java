@@ -62,6 +62,7 @@ public class OrdersFragment extends Fragment {
     private ArrayList<Order> myOrder = new ArrayList<>();
     private List<String> orderID = new ArrayList<>();
     private List<String> sales = new ArrayList<>();
+    private List<Boolean> member = new ArrayList<>();
     private RecyclerView recyclerView;
     private TransactionsRecyclerViewAdapter transactionsRecyclerViewAdapter;
     private EditText editDeleteTransactionId;
@@ -112,6 +113,18 @@ public class OrdersFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case STORAGE_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    savePDF();
+                }else{
+                    Toast.makeText(getContext(),"Permission denied", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
     private void getOrders(){
         myOrder.clear();
         orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -125,7 +138,6 @@ public class OrdersFragment extends Fragment {
                             myOrder.add(order);
                         }
                         transactionsRecyclerViewAdapter.notifyDataSetChanged();
-
                     }
                 }
             }
@@ -199,76 +211,70 @@ public class OrdersFragment extends Fragment {
     }
 
     private void savePDF() {
-        orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (DocumentSnapshot documentSnapshot : task.getResult()){
-                        Order order = documentSnapshot.toObject(Order.class);
-                        for (Order orderItem: myOrder){
-                            if (order.getOrder_id().equals(orderItem.getOrder_id())){
-                                orderItem.setOrderItemArrayList(order.getOrderItemArrayList());
-                            }
-                        }
-                        myOrder.add(order);
+        if(!myOrder.isEmpty()){
+            for(int i = 0; i < myOrder.size(); i++){
+                if(myOrder.get(i).getOrder_date().equals("09112019")){
+                    orderID.add(myOrder.get(i).getOrder_id());
+                    if(myOrder.get(i).getIsMember().equals(true)){
+                        member.add(true);
+                        sales.add(String.valueOf(myOrder.get(i).getOrder_total() * 0.9));
                     }
-
-                    for(int i = 0; i < myOrder.size(); i++){
-                        if(myOrder.get(i).getOrder_date().equals("02112019")){
-                            orderID.add(myOrder.get(i).getOrder_id());
-                            sales.add(String.valueOf(myOrder.get(i).getOrder_total()));
-                        }
-                    }
-
-                    Transaction myTransaction = new Transaction("02112019", orderID, sales);
-
-                    com.itextpdf.text.Document mDoc = new Document(PageSize.A4);
-                    String filename = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis());
-                    String filepath = Environment.getExternalStorageDirectory() + "/" + filename + ".pdf";
-
-                    try{
-                        PdfWriter.getInstance(mDoc, new FileOutputStream(filepath));
-
-                        PdfPTable table = new PdfPTable(new float[]{3,3});
-                        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table.getDefaultCell().setFixedHeight(50);
-                        table.setTotalWidth(PageSize.A4.getWidth());
-                        table.setWidthPercentage(100);
-                        table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-                        table.addCell("Order ID");
-                        table.addCell("Order_Total");
-                        table.setHeaderRows(1);
-                        PdfPCell[] cells = table.getRow(0).getCells();
-                        for(int i = 0; i < cells.length; i++){
-                            cells[i].setBackgroundColor(BaseColor.GRAY);
-                        }
-                        Double total = 0.00;
-                        for(int i = 0; i < orderID.size(); i++){
-                            table.addCell(myTransaction.getOrderID().get(i));
-                            table.addCell(myTransaction.getSales().get(i));
-                            total += Double.parseDouble(myTransaction.getSales().get(i));
-                        }
-
-                        mDoc.open();
-
-                        Font title = new Font(Font.FontFamily.TIMES_ROMAN, 30.0f, Font.BOLD, BaseColor.BLACK);
-                        Font title1 = new Font(Font.FontFamily.TIMES_ROMAN, 24.0f, Font.NORMAL, BaseColor.BLACK);
-
-                        mDoc.add(new Paragraph("Cafe Daily Report\n", title));
-                        mDoc.add(new Paragraph("Transaction\n", title1));
-                        mDoc.add(new Paragraph("Date: " + myTransaction.getDate() + "\n\n"));
-                        mDoc.add(table);
-                        mDoc.add(new Paragraph("\n\nTotal Sales: " + total, title1));
-
-                        mDoc.close();
-
-
-                        Toast.makeText(getContext(), filename + ".pdf\nis saved to\n " + filepath, Toast.LENGTH_SHORT).show();
-                    }catch (Exception e){
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    else{
+                        member.add(false);
+                        sales.add(String.valueOf(myOrder.get(i).getOrder_total()));
                     }
                 }
             }
-        });
+
+            Transaction myTransaction = new Transaction("09112019", orderID, sales, member);
+
+            com.itextpdf.text.Document mDoc = new Document(PageSize.A4);
+            String filename = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis());
+            String filepath = Environment.getExternalStorageDirectory() + "/" + filename + ".pdf";
+
+            try{
+                PdfWriter.getInstance(mDoc, new FileOutputStream(filepath));
+
+                PdfPTable table = new PdfPTable(new float[]{3,3,3});
+                table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+                table.getDefaultCell().setFixedHeight(50);
+                table.setTotalWidth(PageSize.A4.getWidth());
+                table.setWidthPercentage(100);
+                table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell("Order ID");
+                table.addCell("Member");
+                table.addCell("Order_Total");
+                table.setHeaderRows(1);
+                PdfPCell[] cells = table.getRow(0).getCells();
+                for(int i = 0; i < cells.length; i++){
+                    cells[i].setBackgroundColor(BaseColor.GRAY);
+                }
+                Double total = 0.00;
+                for(int i = 0; i < orderID.size(); i++){
+                    table.addCell(myTransaction.getOrderID().get(i));
+                    table.addCell(myTransaction.getMember().get(i).toString());
+                    table.addCell(myTransaction.getSales().get(i));
+                    total += Double.parseDouble(myTransaction.getSales().get(i));
+                }
+
+                mDoc.open();
+
+                Font title = new Font(Font.FontFamily.TIMES_ROMAN, 30.0f, Font.BOLD, BaseColor.BLACK);
+                Font title1 = new Font(Font.FontFamily.TIMES_ROMAN, 24.0f, Font.NORMAL, BaseColor.BLACK);
+
+                mDoc.add(new Paragraph("Cafe Daily Report\n", title));
+                mDoc.add(new Paragraph("Transaction\n", title1));
+                mDoc.add(new Paragraph("Date: " + myTransaction.getDate() + "\n\n"));
+                mDoc.add(table);
+                mDoc.add(new Paragraph("\n\nTotal Sales: " + total, title1));
+
+                mDoc.close();
+
+
+                Toast.makeText(getContext(), filename + ".pdf\nis saved to\n " + filepath, Toast.LENGTH_SHORT).show();
+            }catch (Exception e){
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -7,26 +7,40 @@ public class Order {
     private double order_total;
     private ArrayList<OrderItem> orderItemArrayList;
     private String order_date;
-    private Boolean isPaid;
+
+    private Boolean isMember , isPaid;
 
     public Order() {
     }
 
-    public Order(String order_id, String table_no, double order_total,ArrayList<OrderItem> orderItems, String date) {
+    public Order(String order_id, String table_no, double order_total, ArrayList<OrderItem> orderItems, String date) {
         this.order_id = order_id;
         this.table_no = table_no;
         this.order_total = order_total;
         this.orderItemArrayList = orderItems;
         this.order_date = date;
         this.isPaid = false;
-    }
-
-    public String getOrder_date() {
-        return order_date;
+        this.isMember = false;
     }
 
     public Boolean getIsPaid() {
         return isPaid;
+    }
+
+    public void setIsPaid(Boolean paid) {
+        isPaid = paid;
+    }
+
+    public Boolean getIsMember() {
+        return isMember;
+    }
+
+    public void setIsMember(Boolean member) {
+        isMember = member;
+    }
+
+    public String getOrder_date() {
+        return order_date;
     }
 
     public String getOrder_id() {

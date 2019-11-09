@@ -127,21 +127,22 @@ public class OrdersFragment extends Fragment {
 
     private void getOrders(){
         myOrder.clear();
-        orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(DocumentSnapshot document: task.getResult()){
-                        Order order = document.toObject(Order.class);
-                        if ((order.getIsPaid().equals(true)))
-                        {
-                            myOrder.add(order);
+        if(orderCollectionRef != null) {
+            orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            Order order = document.toObject(Order.class);
+                            if ((order.getIsPaid().equals(true))) {
+                                myOrder.add(order);
+                            }
+                            transactionsRecyclerViewAdapter.notifyDataSetChanged();
                         }
-                        transactionsRecyclerViewAdapter.notifyDataSetChanged();
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void PopupRemoveTransaction(){

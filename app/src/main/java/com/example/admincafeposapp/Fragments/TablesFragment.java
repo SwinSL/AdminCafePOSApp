@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,12 +28,14 @@ import com.example.admincafeposapp.Model.Tables;
 import com.example.admincafeposapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TablesFragment extends Fragment {
 
@@ -49,8 +54,9 @@ public class TablesFragment extends Fragment {
     private Button button_tableAddConfirm, button_addTable;
 
     //Popup Remove Table
-    private EditText editText_removeTableNumber;
+    private Spinner spinner_removeTable;
     private Button button_tableRemoveConfirm, button_removeTable;
+    private String remove_tableNumber;
 
     @Nullable
     @Override
@@ -167,8 +173,6 @@ public class TablesFragment extends Fragment {
                         }
                     });
 
-
-
                 }
                 else
                 {
@@ -186,14 +190,34 @@ public class TablesFragment extends Fragment {
     private void PopupRemoveTable(){
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.remove_table_popup, null);
-        final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
+        final PopupWindow popupWindow = new PopupWindow(view, 400, 200);
 
         popupWindow.setOutsideTouchable(true);
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-        editText_removeTableNumber = view.findViewById(R.id.editText_tableNoRemove);
+        spinner_removeTable = view.findViewById(R.id.spinner_removeTable);
         button_tableRemoveConfirm = view.findViewById(R.id.button_confirmRemoveTable);
+        ArrayList<String> tableNumber = new ArrayList<>();
+
+        for(Tables tables: tablesArrayList)
+        {
+            tableNumber.add(tables.getTableNo());
+        }
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_spinner_item, tableNumber);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_removeTable.setAdapter(spinnerAdapter);
+
+        spinner_removeTable.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                remove_tableNumber = adapterView.getItemAtPosition(pos).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) { }
+        });
 
         button_tableRemoveConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,11 +232,7 @@ public class TablesFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
-                                if(!editText_removeTableNumber.getText().toString().isEmpty())
-                                {
-                                    final String tableNoRemove = editText_removeTableNumber.getText().toString();
-
-                                    tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                             if(task.isSuccessful())
@@ -220,10 +240,10 @@ public class TablesFragment extends Fragment {
                                                 for(DocumentSnapshot document: task.getResult())
                                                 {
                                                     Tables tables = document.toObject(Tables.class);
-                                                    if(tables.getTableNo().equals(tableNoRemove))
+                                                    if(tables.getTableNo().equals(remove_tableNumber))
                                                     {
                                                         tableCollectionReference.document(document.getId()).delete();
-                                                        Toast.makeText(getContext(),"Tables Number: " + tableNoRemove + "is removed!", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(getContext(),"Tables Number: " + remove_tableNumber + " is removed!", Toast.LENGTH_LONG).show();
                                                     }
                                                     else
                                                     {
@@ -237,11 +257,8 @@ public class TablesFragment extends Fragment {
 
 
                                     popupWindow.dismiss();
-                                }
-                                else
-                                {
-                                    Toast.makeText(getContext(),"Please enter Table Number", Toast.LENGTH_SHORT).show();
-                                }
+
+
                             }
                         });
 

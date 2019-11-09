@@ -6,9 +6,8 @@ public class Order {
     private String order_id, table_no;
     private double order_total;
     private ArrayList<OrderItem> orderItemArrayList;
-    private String order_date;
-
-    private Boolean isMember , isPaid;
+    private String order_date, order_status;
+    private Boolean isMember;
 
     public Order() {
     }
@@ -19,16 +18,16 @@ public class Order {
         this.order_total = order_total;
         this.orderItemArrayList = orderItems;
         this.order_date = date;
-        this.isPaid = false;
+        this.order_status = "Not Paid";
         this.isMember = false;
     }
 
-    public Boolean getIsPaid() {
-        return isPaid;
+    public String getOrder_status() {
+        return order_status;
     }
 
-    public void setIsPaid(Boolean paid) {
-        isPaid = paid;
+    public void setOrder_status(String order_status) {
+        this.order_status = order_status;
     }
 
     public Boolean getIsMember() {

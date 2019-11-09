@@ -134,9 +134,7 @@ public class OrdersFragment extends Fragment {
                     if (task.isSuccessful()) {
                         for (DocumentSnapshot document : task.getResult()) {
                             Order order = document.toObject(Order.class);
-                            if ((order.getIsPaid().equals(true))) {
-                                myOrder.add(order);
-                            }
+                            myOrder.add(order);
                             transactionsRecyclerViewAdapter.notifyDataSetChanged();
                         }
                     }
@@ -146,7 +144,6 @@ public class OrdersFragment extends Fragment {
     }
 
     private void PopupRemoveTransaction(){
-
         View view = LayoutInflater.from(getContext()).inflate(R.layout.remove_transactions_popup, null);
         final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
 
@@ -196,7 +193,6 @@ public class OrdersFragment extends Fragment {
                                         }
                                     });
 
-
                                     popupWindow.dismiss();
                                 }
                                 else
@@ -213,9 +209,10 @@ public class OrdersFragment extends Fragment {
 
     private void savePDF() {
         if(!myOrder.isEmpty()){
-            for(int i = 0; i < myOrder.size(); i++){
+            for(int i = 1; i < myOrder.size(); i++){
                 if(myOrder.get(i).getOrder_date().equals("09112019")){
                     orderID.add(myOrder.get(i).getOrder_id());
+                    Log.d("TAG", String.valueOf(myOrder.get(i).getIsMember()));
                     if(myOrder.get(i).getIsMember().equals(true)){
                         member.add(true);
                         sales.add(String.valueOf(myOrder.get(i).getOrder_total() * 0.9));
@@ -270,7 +267,6 @@ public class OrdersFragment extends Fragment {
                 mDoc.add(new Paragraph("\n\nTotal Sales: " + total, title1));
 
                 mDoc.close();
-
 
                 Toast.makeText(getContext(), filename + ".pdf\nis saved to\n " + filepath, Toast.LENGTH_SHORT).show();
             }catch (Exception e){

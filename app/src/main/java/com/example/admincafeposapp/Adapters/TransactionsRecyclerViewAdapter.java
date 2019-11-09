@@ -35,7 +35,7 @@ public class TransactionsRecyclerViewAdapter extends RecyclerView.Adapter<Transa
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.order_id.setText(orderList.get(position).getOrder_id());
         holder.table_no.setText(orderList.get(position).getTable_no());
-        holder.order_status.setText("Paid");
+        holder.order_status.setText(orderList.get(position).getOrder_status());
     }
 
     @Override

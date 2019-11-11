@@ -2,6 +2,7 @@ package com.example.admincafeposapp.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -48,10 +50,13 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.FileOutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class OrdersFragment extends Fragment {
 
@@ -59,13 +64,17 @@ public class OrdersFragment extends Fragment {
     private Button btn, deleteConfirmTransactionBtn, deleteTransactionBtn;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference orderCollectionRef = db.collection("Orders");
-    private ArrayList<Order> myOrder = new ArrayList<>();
-    private List<String> orderID = new ArrayList<>();
-    private List<String> sales = new ArrayList<>();
-    private List<Boolean> member = new ArrayList<>();
+    private ArrayList<Order> orderArrayList = new ArrayList<>();
+    private ArrayList<Order> reportOrderArrayList = new ArrayList<>();
+    private List<String> orderIDArrayList = new ArrayList<>();
+    private List<String> salesArrayList = new ArrayList<>();
+    private List<String> orderStatusArray = new ArrayList<>();
+    private List<Boolean> memberArrayList = new ArrayList<>();
     private RecyclerView recyclerView;
     private TransactionsRecyclerViewAdapter transactionsRecyclerViewAdapter;
     private EditText editDeleteTransactionId;
+    private String chosenDate;
+    private TextView date_chosen;
 
     @Nullable
     @Override
@@ -77,15 +86,13 @@ public class OrdersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        recyclerView = view.findViewById(R.id.transactions_recyclerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        transactionsRecyclerViewAdapter = new TransactionsRecyclerViewAdapter(this.getContext(), myOrder);
-        recyclerView.setAdapter(transactionsRecyclerViewAdapter);
-
+        initUI();
+        buildRecycler();
         getOrders();
+    }
 
-        deleteTransactionBtn = view.findViewById(R.id.transactiondeleteButton);
+    private void initUI() {
+        deleteTransactionBtn = getActivity().findViewById(R.id.transactiondeleteButton);
         deleteTransactionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,8 +100,19 @@ public class OrdersFragment extends Fragment {
             }
         });
 
-        btn = view.findViewById(R.id.print_btn);
+        Calendar c = Calendar.getInstance();
+        date_chosen = getActivity().findViewById(R.id.tv_date);
+        date_chosen.setText(DateFormat.getDateInstance(DateFormat.LONG,Locale.UK).format(c.getTime()));
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+        chosenDate = formatter.format(c.getTime());
+        date_chosen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                datepicker();
+            }
+        });
 
+        btn = getActivity().findViewById(R.id.print_btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,6 +131,39 @@ public class OrdersFragment extends Fragment {
         });
     }
 
+    private void buildRecycler() {
+        recyclerView = getActivity().findViewById(R.id.transactions_recyclerview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        transactionsRecyclerViewAdapter = new TransactionsRecyclerViewAdapter(this.getContext(), orderArrayList);
+        recyclerView.setAdapter(transactionsRecyclerViewAdapter);
+    }
+
+    private void datepicker() {
+        final Calendar myCalendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+                chosenDate = formatter.format(myCalendar.getTime());
+                date_chosen.setText(DateFormat.getDateInstance(DateFormat.LONG,Locale.UK).format(myCalendar.getTime()));
+            }
+
+        };
+
+        DatePickerDialog datepickerDialog = new DatePickerDialog(Objects.requireNonNull(getContext()), date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH));
+
+        datepickerDialog.getDatePicker().setMaxDate(myCalendar.getTimeInMillis());
+        datepickerDialog.show();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -126,7 +177,8 @@ public class OrdersFragment extends Fragment {
     }
 
     private void getOrders(){
-        myOrder.clear();
+        reportOrderArrayList.clear();
+        orderArrayList.clear();
         if(orderCollectionRef != null) {
             orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -134,13 +186,17 @@ public class OrdersFragment extends Fragment {
                     if (task.isSuccessful()) {
                         for (DocumentSnapshot document : task.getResult()) {
                             Order order = document.toObject(Order.class);
-                            myOrder.add(order);
+                            orderArrayList.add(order);
+                            if(order.getOrder_date().equals(chosenDate)){
+                                reportOrderArrayList.add(order);
+                            }
                             transactionsRecyclerViewAdapter.notifyDataSetChanged();
                         }
                     }
                 }
             });
         }
+
     }
 
     private void PopupRemoveTransaction(){
@@ -208,24 +264,24 @@ public class OrdersFragment extends Fragment {
     }
 
     private void savePDF() {
-        if(!myOrder.isEmpty()){
-            for(int i = 1; i < myOrder.size(); i++){
-                if(myOrder.get(i).getOrder_date().equals("09112019")){
-                    orderID.add(myOrder.get(i).getOrder_id());
-                    Log.d("TAG", String.valueOf(myOrder.get(i).getIsMember()));
-                    if(myOrder.get(i).getIsMember().equals(true)){
-                        member.add(true);
-                        sales.add(String.valueOf(myOrder.get(i).getOrder_total() * 0.9));
+        if(!reportOrderArrayList.isEmpty()){
+            for(int i = 0; i < reportOrderArrayList.size(); i++){
+                if(reportOrderArrayList.get(i).getOrder_date().equals(chosenDate)){
+                    orderIDArrayList.add(reportOrderArrayList.get(i).getOrder_id());
+                    Log.d("TAG", String.valueOf(reportOrderArrayList.get(i).getIsMember()));
+                    if(reportOrderArrayList.get(i).getIsMember().equals(true)){
+                        memberArrayList.add(true);
+                        salesArrayList.add(String.valueOf(reportOrderArrayList.get(i).getOrder_total() * 0.9));
                     }
                     else{
-                        member.add(false);
-                        sales.add(String.valueOf(myOrder.get(i).getOrder_total()));
+                        memberArrayList.add(false);
+                        salesArrayList.add(String.valueOf(reportOrderArrayList.get(i).getOrder_total()));
                     }
+                    orderStatusArray.add(reportOrderArrayList.get(i).getOrder_status());
                 }
             }
 
-            Transaction myTransaction = new Transaction("09112019", orderID, sales, member);
-
+            Transaction myTransaction = new Transaction(chosenDate, orderIDArrayList, salesArrayList, memberArrayList,orderStatusArray);
             com.itextpdf.text.Document mDoc = new Document(PageSize.A4);
             String filename = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis());
             String filepath = Environment.getExternalStorageDirectory() + "/" + filename + ".pdf";
@@ -233,7 +289,7 @@ public class OrdersFragment extends Fragment {
             try{
                 PdfWriter.getInstance(mDoc, new FileOutputStream(filepath));
 
-                PdfPTable table = new PdfPTable(new float[]{3,3,3});
+                PdfPTable table = new PdfPTable(new float[]{3,3,3,3});
                 table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.getDefaultCell().setFixedHeight(50);
                 table.setTotalWidth(PageSize.A4.getWidth());
@@ -241,17 +297,19 @@ public class OrdersFragment extends Fragment {
                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
                 table.addCell("Order ID");
                 table.addCell("Member");
-                table.addCell("Order_Total");
+                table.addCell("Order Total");
+                table.addCell("Order Status");
                 table.setHeaderRows(1);
                 PdfPCell[] cells = table.getRow(0).getCells();
                 for(int i = 0; i < cells.length; i++){
                     cells[i].setBackgroundColor(BaseColor.GRAY);
                 }
                 Double total = 0.00;
-                for(int i = 0; i < orderID.size(); i++){
+                for(int i = 0; i < orderIDArrayList.size(); i++){
                     table.addCell(myTransaction.getOrderID().get(i));
                     table.addCell(myTransaction.getMember().get(i).toString());
                     table.addCell(myTransaction.getSales().get(i));
+                    table.addCell(myTransaction.getOrderStatus().get(i));
                     total += Double.parseDouble(myTransaction.getSales().get(i));
                 }
 
@@ -272,6 +330,9 @@ public class OrdersFragment extends Fragment {
             }catch (Exception e){
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        }
+        else{
+            Toast.makeText(getContext(),"Transaction is empty for the day!", Toast.LENGTH_SHORT).show();
         }
     }
 }

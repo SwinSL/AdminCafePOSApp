@@ -47,5 +47,9 @@
     <string name="_1_2_3_etc">1, 2, 3, etc</string>
     <string name="table_no_upper">TABLE NO.</string>
 
+    <string-array name="table_status">
+        <item>Available</item>
+        <item>Unavailable</item>
+    </string-array>
 
 </resources>

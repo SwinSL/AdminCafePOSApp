@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,17 @@ public class TableRecyclerViewAdapter extends RecyclerView.Adapter<TableRecycler
 
     private Context context;
     private ArrayList<Tables> tablesArrayList;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener
+    {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener)
+    {
+        mListener = listener;
+    }
 
     public TableRecyclerViewAdapter(Context context, ArrayList<Tables> tablesArrayList) {
         this.context = context;
@@ -28,7 +40,7 @@ public class TableRecyclerViewAdapter extends RecyclerView.Adapter<TableRecycler
     @Override
     public TableRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(this.context).inflate(R.layout.table_list_row, parent,false);
-        ViewHolder holder =new ViewHolder(view);
+        ViewHolder holder = new ViewHolder(view, mListener);
         return  holder;
     }
 
@@ -47,15 +59,29 @@ public class TableRecyclerViewAdapter extends RecyclerView.Adapter<TableRecycler
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
         private TextView textView_tableNo, textView_tableNoOfSeat, textView_tableStatus;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
 
             textView_tableNo = itemView.findViewById(R.id.textView_tableNoData);
             textView_tableNoOfSeat = itemView.findViewById(R.id.textView_tableNoSeatData);
             textView_tableStatus = itemView.findViewById(R.id.textView_tableStatusData);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(listener != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                        {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 }

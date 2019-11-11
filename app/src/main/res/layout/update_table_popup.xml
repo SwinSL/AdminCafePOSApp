@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray">
+
+    <TextView
+        android:id="@+id/textView_tableTitleUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/raleway"
+        android:padding="10dp"
+        android:text="Update Table"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/tablePopup_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="160dp" />
+
+    <TextView
+        android:id="@+id/textView_popupTableNumberUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="@string/table_number"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tablePopup_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_tableTitleUpdate" />
+
+    <TextView
+        android:id="@+id/textView_popupNumberOfSeatUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/number_of_seat_popup"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tablePopup_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_popupTableNumberUpdate" />
+
+    <TextView
+        android:id="@+id/textView_popupTableStatusUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/table_status"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tablePopup_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_popupNumberOfSeatUpdate" />
+
+    <Button
+        android:id="@+id/button_confirmUpdateTable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        android:fontFamily="@font/raleway"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_updateTableStatus" />
+
+    <TextView
+        android:id="@+id/textView_updateTableNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Table Number"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_popupTableNumberUpdate"
+        app:layout_constraintStart_toStartOf="@+id/tablePopup_guideline"
+        app:layout_constraintTop_toTopOf="@+id/textView_popupTableNumberUpdate" />
+
+
+    <EditText
+        android:id="@+id/editText_tableNumberOfSeatUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_style"
+        android:ems="10"
+        android:fontFamily="@font/raleway"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_popupNumberOfSeatUpdate"
+        app:layout_constraintStart_toEndOf="@+id/tablePopup_guideline"
+        app:layout_constraintTop_toTopOf="@+id/textView_popupNumberOfSeatUpdate" />
+
+    <Spinner
+        android:id="@+id/spinner_updateTableStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/raleway"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_popupTableStatusUpdate"
+        app:layout_constraintStart_toEndOf="@+id/tablePopup_guideline"
+        app:layout_constraintTop_toTopOf="@+id/textView_popupTableStatusUpdate" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

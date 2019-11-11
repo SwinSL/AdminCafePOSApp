@@ -36,4 +36,11 @@ public class Transaction {
     public List<Boolean> getMember() {
         return member;
     }
+
+    public void reset() {
+        orderID.clear();
+        sales.clear();
+        orderStatus.clear();
+        member.clear();
+    }
 }

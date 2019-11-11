@@ -164,7 +164,6 @@ public class OrdersFragment extends Fragment {
                 SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
                 chosenDate = formatter.format(myCalendar.getTime());
                 date_chosen.setText(DateFormat.getDateInstance(DateFormat.LONG,Locale.UK).format(myCalendar.getTime()));
-                getOrders();
             }
 
         };
@@ -187,11 +186,6 @@ public class OrdersFragment extends Fragment {
                         for (DocumentSnapshot document : task.getResult()) {
                             Order order = document.toObject(Order.class);
                             orderArrayList.add(order);
-                            Log.d("Date", chosenDate);
-                            if(order.getOrder_date().equals(chosenDate)){
-                                reportOrderArrayList.add(order);
-                            }else
-                                reportOrderArrayList.clear();
                             transactionsRecyclerViewAdapter.notifyDataSetChanged();
                         }
                     }
@@ -266,10 +260,14 @@ public class OrdersFragment extends Fragment {
     }
 
     private void savePDF() {
-        Log.d("Order",String.valueOf(reportOrderArrayList.size()));
+        for(int i = 0; i < orderArrayList.size(); i++){
+            if(orderArrayList.get(i).getOrder_date().equals(chosenDate) && !(orderArrayList.get(i).getOrder_status().equals("Cancelled"))){
+                reportOrderArrayList.add(orderArrayList.get(i));
+            }
+        }
+
         if(!reportOrderArrayList.isEmpty()){
             for(int i = 0; i < reportOrderArrayList.size(); i++){
-                if(reportOrderArrayList.get(i).getOrder_date().equals(chosenDate)){
                     orderIDArrayList.add(reportOrderArrayList.get(i).getOrder_id());
                     if(reportOrderArrayList.get(i).getIsMember().equals(true)){
                         memberArrayList.add(true);
@@ -280,13 +278,14 @@ public class OrdersFragment extends Fragment {
                         salesArrayList.add(String.valueOf(reportOrderArrayList.get(i).getOrder_total()));
                     }
                     orderStatusArray.add(reportOrderArrayList.get(i).getOrder_status());
-                }
             }
 
             Transaction myTransaction = new Transaction(chosenDate, orderIDArrayList, salesArrayList, memberArrayList,orderStatusArray);
             com.itextpdf.text.Document mDoc = new Document(PageSize.A4);
             String filename = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis());
             String filepath = Environment.getExternalStorageDirectory() + "/" + filename + ".pdf";
+
+            System.out.println(myTransaction.getOrderID());
 
             try{
                 PdfWriter.getInstance(mDoc, new FileOutputStream(filepath));
@@ -327,7 +326,7 @@ public class OrdersFragment extends Fragment {
                 mDoc.add(new Paragraph("\n\nTotal Sales: " + total, title1));
 
                 mDoc.close();
-
+                myTransaction.reset();
                 Toast.makeText(getContext(), filename + ".pdf\nis saved to\n " + filepath, Toast.LENGTH_SHORT).show();
             }catch (Exception e){
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -336,5 +335,6 @@ public class OrdersFragment extends Fragment {
         else{
             Toast.makeText(getContext(),"Transaction is empty for the day!", Toast.LENGTH_SHORT).show();
         }
+        reportOrderArrayList.clear();
     }
 }

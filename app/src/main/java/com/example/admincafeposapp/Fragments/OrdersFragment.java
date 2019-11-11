@@ -131,6 +131,18 @@ public class OrdersFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case STORAGE_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    savePDF();
+                }else{
+                    Toast.makeText(getContext(),"Permission denied", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
     private void buildRecycler() {
         recyclerView = getActivity().findViewById(R.id.transactions_recyclerview);
         recyclerView.setHasFixedSize(true);
@@ -152,6 +164,7 @@ public class OrdersFragment extends Fragment {
                 SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
                 chosenDate = formatter.format(myCalendar.getTime());
                 date_chosen.setText(DateFormat.getDateInstance(DateFormat.LONG,Locale.UK).format(myCalendar.getTime()));
+                getOrders();
             }
 
         };
@@ -164,20 +177,7 @@ public class OrdersFragment extends Fragment {
         datepickerDialog.show();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case STORAGE_CODE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    savePDF();
-                }else{
-                    Toast.makeText(getContext(),"Permission denied", Toast.LENGTH_SHORT).show();
-                }
-        }
-    }
-
     private void getOrders(){
-        reportOrderArrayList.clear();
         orderArrayList.clear();
         if(orderCollectionRef != null) {
             orderCollectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -187,9 +187,11 @@ public class OrdersFragment extends Fragment {
                         for (DocumentSnapshot document : task.getResult()) {
                             Order order = document.toObject(Order.class);
                             orderArrayList.add(order);
+                            Log.d("Date", chosenDate);
                             if(order.getOrder_date().equals(chosenDate)){
                                 reportOrderArrayList.add(order);
-                            }
+                            }else
+                                reportOrderArrayList.clear();
                             transactionsRecyclerViewAdapter.notifyDataSetChanged();
                         }
                     }
@@ -264,11 +266,11 @@ public class OrdersFragment extends Fragment {
     }
 
     private void savePDF() {
+        Log.d("Order",String.valueOf(reportOrderArrayList.size()));
         if(!reportOrderArrayList.isEmpty()){
             for(int i = 0; i < reportOrderArrayList.size(); i++){
                 if(reportOrderArrayList.get(i).getOrder_date().equals(chosenDate)){
                     orderIDArrayList.add(reportOrderArrayList.get(i).getOrder_id());
-                    Log.d("TAG", String.valueOf(reportOrderArrayList.get(i).getIsMember()));
                     if(reportOrderArrayList.get(i).getIsMember().equals(true)){
                         memberArrayList.add(true);
                         salesArrayList.add(String.valueOf(reportOrderArrayList.get(i).getOrder_total() * 0.9));
@@ -305,7 +307,7 @@ public class OrdersFragment extends Fragment {
                     cells[i].setBackgroundColor(BaseColor.GRAY);
                 }
                 Double total = 0.00;
-                for(int i = 0; i < orderIDArrayList.size(); i++){
+                for(int i = 0; i < reportOrderArrayList.size(); i++){
                     table.addCell(myTransaction.getOrderID().get(i));
                     table.addCell(myTransaction.getMember().get(i).toString());
                     table.addCell(myTransaction.getSales().get(i));
@@ -320,7 +322,7 @@ public class OrdersFragment extends Fragment {
 
                 mDoc.add(new Paragraph("Cafe Daily Report\n", title));
                 mDoc.add(new Paragraph("Transaction\n", title1));
-                mDoc.add(new Paragraph("Date: " + myTransaction.getDate() + "\n\n"));
+                mDoc.add(new Paragraph("Date: " + date_chosen.getText() + "\n\n"));
                 mDoc.add(table);
                 mDoc.add(new Paragraph("\n\nTotal Sales: " + total, title1));
 

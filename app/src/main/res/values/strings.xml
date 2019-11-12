@@ -50,6 +50,7 @@
     <string-array name="table_status">
         <item>Available</item>
         <item>Unavailable</item>
+        <item>Reserved</item>
     </string-array>
 
 </resources>

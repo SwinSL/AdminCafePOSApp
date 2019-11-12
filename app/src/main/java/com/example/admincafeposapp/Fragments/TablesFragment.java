@@ -57,8 +57,10 @@ public class TablesFragment extends Fragment {
     private CollectionReference tableCollectionReference = db.collection("Tables");
 
     //Popup Add Table Info
-    private EditText editText_tableNumber, editText_numberOfSeat, editText_tableStatus;
+    private EditText editText_tableNumber, editText_numberOfSeat;
     private Button button_tableAddConfirm, button_addTable;
+    private Spinner spinner_addTableStautus;
+    private String addTableStatus;
 
     //Popup Remove Table
     private Spinner spinner_TableNumber;
@@ -130,7 +132,7 @@ public class TablesFragment extends Fragment {
                 textView_tableNo_update.setText(tablesArrayList.get(position).getTableNo());
                 tableNumberUpdate = tablesArrayList.get(position).getTableNo();
 
-                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.table_status, android.R.layout.simple_spinner_item);
+                ArrayAdapter<CharSequence>  adapter = ArrayAdapter.createFromResource(getContext(), R.array.table_status, android.R.layout.simple_spinner_item);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner_tableStatus_update.setAdapter(adapter);
 
@@ -225,8 +227,24 @@ public class TablesFragment extends Fragment {
 
         editText_tableNumber = view.findViewById(R.id.editText_tableNo);
         editText_numberOfSeat = view.findViewById(R.id.editText_tableNumberOfSeat);
-        editText_tableStatus = view.findViewById(R.id.editText_tableStatus);
+        spinner_addTableStautus = view.findViewById(R.id.spinner_popupAddTableStatus);
         button_tableAddConfirm = view.findViewById(R.id.button_confirmAddTable);
+
+        ArrayAdapter<CharSequence>  adapter = ArrayAdapter.createFromResource(getContext(), R.array.table_status, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_addTableStautus.setAdapter(adapter);
+
+        spinner_addTableStautus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                addTableStatus = adapterView.getItemAtPosition(pos).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         button_tableAddConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,7 +254,6 @@ public class TablesFragment extends Fragment {
                 {
                     final String tableNumber = editText_tableNumber.getText().toString();
                     final int numberOfSeat = Integer.parseInt(editText_numberOfSeat.getText().toString());
-                    final String tableStatus = editText_tableStatus.getText().toString();
 
                     tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -257,7 +274,7 @@ public class TablesFragment extends Fragment {
                                     }
                                     else
                                     {
-                                        Tables tables1 = new Tables(tableNumber, numberOfSeat, tableStatus);
+                                        Tables tables1 = new Tables(tableNumber, numberOfSeat, addTableStatus);
                                         tableCollectionReference.document(tableNumber).set(tables1);
 
                                         Toast.makeText(getContext(),"New Tables is added Successfully!", Toast.LENGTH_LONG).show();
@@ -281,7 +298,7 @@ public class TablesFragment extends Fragment {
     }
 
     private boolean validateAddFields() {
-        return !(editText_tableNumber.getText().toString().isEmpty() || editText_numberOfSeat.getText().toString().isEmpty() || editText_tableStatus.getText().toString().isEmpty());
+        return !(editText_tableNumber.getText().toString().isEmpty() || editText_numberOfSeat.getText().toString().isEmpty());
     }
 
     private void PopupRemoveTable(){

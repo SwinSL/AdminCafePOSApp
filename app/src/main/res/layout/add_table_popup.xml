@@ -99,23 +99,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_popupTableNumberOfSeat" />
 
-    <EditText
-        android:id="@+id/editText_tableStatus"
-        android:layout_width="200dp"
-        android:layout_height="35dp"
-        android:background="@drawable/edit_text_style"
-        android:fontFamily="@font/raleway"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/textView_popupTableStatus"
-        app:layout_constraintStart_toEndOf="@+id/tablePopup_guideline"
-        app:layout_constraintTop_toTopOf="@+id/textView_popupTableStatus" />
-
     <Button
         android:id="@+id/button_confirmAddTable"
         android:layout_width="wrap_content"
@@ -125,7 +108,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_tableStatus" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_popupAddTableStatus" />
+
+    <Spinner
+        android:id="@+id/spinner_popupAddTableStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_popupTableStatus"
+        app:layout_constraintStart_toEndOf="@+id/tablePopup_guideline"
+        app:layout_constraintTop_toTopOf="@+id/textView_popupTableStatus" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

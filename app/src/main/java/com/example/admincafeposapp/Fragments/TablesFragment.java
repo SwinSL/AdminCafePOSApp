@@ -222,7 +222,6 @@ public class TablesFragment extends Fragment {
         button_tableRemoveConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
                 builder.setTitle("Remove Table")
@@ -231,7 +230,6 @@ public class TablesFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-
                                 tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -255,16 +253,11 @@ public class TablesFragment extends Fragment {
                                         }
                                     });
 
-
                                     popupWindow.dismiss();
-
-
                             }
                         });
 
                 builder.show();
-
-
             }
         });
     }

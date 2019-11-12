@@ -38,7 +38,7 @@ public class ReservationRecyclerViewAdapter extends RecyclerView.Adapter<Reserva
         holder.reservation_id.setText(reservation.getId());
         holder.reservation_surname.setText(reservation.getCustomer_surname());
         holder.reservation_date.setText(reservation.getDate());
-        holder.reservation_time.setText(reservation.getTime());
+        holder.reservation_time.setText(reservation.getStart_time());
         holder.reservation_noOfPeople.setText(String.valueOf(reservation.getNoOfPeople()));
         holder.reservation_tableNo.setText(reservation.getTable_no());
     }

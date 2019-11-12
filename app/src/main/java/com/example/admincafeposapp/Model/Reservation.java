@@ -1,18 +1,19 @@
 package com.example.admincafeposapp.Model;
 
 public class Reservation {
-    private String id, customer_surname, table_no, date, time;
+    private String id, customer_surname, table_no, date, start_time, end_time;
     private int noOfPeople;
 
     public Reservation() {
     }
 
-    public Reservation(String id, String customer_surname, String table_no, String date, String time, int noOfPeople) {
+    public Reservation(String id, String customer_surname, String table_no, String date, String start_time, String end_time, int noOfPeople) {
         this.id = id;
         this.customer_surname = customer_surname;
         this.table_no = table_no;
         this.date = date;
-        this.time = time;
+        this.start_time = start_time;
+        this.end_time = end_time;
         this.noOfPeople = noOfPeople;
     }
 
@@ -48,12 +49,20 @@ public class Reservation {
         this.date = date;
     }
 
-    public String getTime() {
-        return time;
+    public String getStart_time() {
+        return start_time;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setStart_time(String start_time) {
+        this.start_time = start_time;
+    }
+
+    public String getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
     }
 
     public int getNoOfPeople() {

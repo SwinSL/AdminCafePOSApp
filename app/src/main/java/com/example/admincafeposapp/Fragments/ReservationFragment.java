@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,19 +28,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.admincafeposapp.Adapters.ReservationRecyclerViewAdapter;
 import com.example.admincafeposapp.Model.Reservation;
+import com.example.admincafeposapp.Model.Tables;
 import com.example.admincafeposapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ReservationFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -144,7 +150,7 @@ public class ReservationFragment extends Fragment {
                                                         for(DocumentSnapshot document: Objects.requireNonNull(task.getResult())){
                                                             Reservation reservation = document.toObject(Reservation.class);
                                                             assert reservation != null;
-                                                            if(reservation.getCustomer_surname().equals(surname) && reservation.getTable_no().equals(tableNo) && reservation.getDate().equals(date) && reservation.getTime().equals(time)){
+                                                            if(reservation.getCustomer_surname().equals(surname) && reservation.getTable_no().equals(tableNo) && reservation.getDate().equals(date) && reservation.getStart_time().equals(time)){
                                                                 collectionReference.document(document.getId()).delete();
                                                             }
                                                         }
@@ -197,7 +203,7 @@ public class ReservationFragment extends Fragment {
 
         for(Reservation reservation: reservationArrayList){
             if(reservation.getCustomer_surname().equals(surname) && reservation.getDate().equals(date))
-                time_options.add(reservation.getTime());
+                time_options.add(reservation.getStart_time());
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, time_options);
@@ -218,7 +224,7 @@ public class ReservationFragment extends Fragment {
         ArrayList<String> table_options = new ArrayList<>();
 
         for(Reservation reservation: reservationArrayList){
-            if(reservation.getCustomer_surname().equals(surname) && reservation.getDate().equals(date) && reservation.getTime().equals(time))
+            if(reservation.getCustomer_surname().equals(surname) && reservation.getDate().equals(date) && reservation.getStart_time().equals(time))
                 table_options.add(reservation.getTable_no());
         }
 
@@ -270,10 +276,26 @@ public class ReservationFragment extends Fragment {
                     String surname = addReservation_surname_editText.getText().toString();
                     String tableNo = addReservation_tableNo_spinner.getSelectedItem().toString();
                     String date = addReservation_date_editText.getText().toString();
-                    String time = addReservation_time_spinner.getSelectedItem().toString();
+                    String start_time = addReservation_time_spinner.getSelectedItem().toString();
                     int noOfPeople = Integer.parseInt(addReservation_noOfPeople_editText.getText().toString());
 
-                    Reservation reservation = new Reservation(id, surname, tableNo, date, time, noOfPeople);
+
+                    Calendar myCalendar = Calendar.getInstance();
+                    String myFormat = "h:mma";
+                    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                    Date date_endTime = null;
+                    try {
+                        Date date_startTime = sdf.parse(start_time);
+                        myCalendar.setTime(date_startTime);
+                        myCalendar.add(Calendar.HOUR_OF_DAY, 2);
+                        date_endTime = myCalendar.getTime();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    String end_time = sdf.format(date_endTime);
+
+                    Reservation reservation = new Reservation(id, surname, tableNo, date, start_time, end_time, noOfPeople);
                     collectionReference.document().set(reservation);
                     getReservations();
                     Toast.makeText(getContext(),"Reservation Successful!", Toast.LENGTH_LONG).show();
@@ -308,7 +330,7 @@ public class ReservationFragment extends Fragment {
                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH));
 
-        datepickerDialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis());
+        datepickerDialog.getDatePicker().setMinDate(myCalendar.getTimeInMillis() + 1000L*60*60*24);
         datepickerDialog.getDatePicker().setMaxDate((myCalendar.getTimeInMillis() + 1000L*60*60*24*30));
         datepickerDialog.show();
     }
@@ -352,40 +374,44 @@ public class ReservationFragment extends Fragment {
         addReservation_time_spinner.setAdapter(adapter);
     }
 
-    private void getTables(String date_selected, String time_selected) {
-        ArrayList<String> table_options = new ArrayList<>();
-        table_options.add("1A");
-        table_options.add("2A");
-        table_options.add("3A");
-        table_options.add("1B");
-        table_options.add("2B");
-        table_options.add("3B");
-
-        for(Reservation reservation: reservationArrayList){
-            if(reservation.getDate().equals(date_selected) && reservation.getTime().equals(time_selected)){
-                table_options.remove(reservation.getTable_no());
-            }
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, table_options);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        addReservation_tableNo_spinner.setAdapter(adapter);
-    }
-
-/*    private void setReservation(){
-        Reservation reservation = new Reservation("Reservation01", "Tan", "5", "24 October 2019", "12:00 AM", 1000);
-
-        collectionReference.document().set(reservation)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+    private void getTables(final String date_selected, final String time_selected) {
+        final ArrayList<String> table_options = new ArrayList<>();
+        CollectionReference tableCollectionReference = db.collection("Tables");
+        tableCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("TAG", "DocumentSnapshot successfully written!");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("TAG", "Error writing document", e);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document: task.getResult())
+                    {
+                        Tables tables = document.toObject(Tables.class);
+                        table_options.add(tables.getTableNo());
+                    }
+
+                    String myFormat = "h:mma";
+                    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                    for(Reservation reservation: reservationArrayList){
+                        try {
+                            Date reservation_startTime = sdf.parse(reservation.getStart_time());
+                            Date selected_startTime = sdf.parse(time_selected);
+
+                            long diffInMillies = reservation_startTime.getTime() - selected_startTime.getTime();
+                            long diff = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                            Log.d("TAG", String.valueOf(diff));
+                            if(reservation.getDate().equals(date_selected) && (diff>= -120 && diff <= 120)){
+                                table_options.remove(reservation.getTable_no());
+                            }
+                        } catch (ParseException e) {
+                            Log.d("TAG", String.valueOf(e));
+                            e.printStackTrace();
+                        }
+                    }
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), R.layout.reservation_spinner_item, table_options);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    addReservation_tableNo_spinner.setAdapter(adapter);
+                }
             }
         });
-    }*/
+    }
 }

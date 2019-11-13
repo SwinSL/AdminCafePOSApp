@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.admincafeposapp.Adapters.TransactionsRecyclerViewAdapter;
-import com.example.admincafeposapp.Model.Food;
 import com.example.admincafeposapp.Model.Order;
 import com.example.admincafeposapp.Model.Transaction;
 import com.example.admincafeposapp.R;
@@ -323,7 +322,7 @@ public class OrdersFragment extends Fragment {
                 mDoc.add(new Paragraph("Transaction\n", title1));
                 mDoc.add(new Paragraph("Date: " + date_chosen.getText() + "\n\n"));
                 mDoc.add(table);
-                mDoc.add(new Paragraph("\n\nTotal Sales: " + total, title1));
+                mDoc.add(new Paragraph("\n\nTotal Sales: " + String.format("%.2f",total), title1));
 
                 mDoc.close();
                 myTransaction.reset();

@@ -3,6 +3,7 @@ package com.example.admincafeposapp.Fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -57,13 +58,16 @@ public class MembersFragment extends Fragment{
             popupWindow = new PopupWindow(container, 400, WindowManager.LayoutParams.WRAP_CONTENT, true);
             popupWindow.showAtLocation(constraintLayout,Gravity.CENTER,0,0);
             btn_confirm = container.findViewById(R.id.button_confirm);
+            memID = container.findViewById(R.id.et_id);
             title = container.findViewById(R.id.tv_title);
+            memID.setText(membersList.get(position).getID());
+            memID.setTextColor(Color.BLACK);
+            memID.setEnabled(false);
 
             title.setText("Update member");
             btn_confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    memID = container.findViewById(R.id.et_id);
                     memName = container.findViewById(R.id.et_name);
                     final String ID = memID.getText().toString();
                     final String Name = memName.getText().toString();
@@ -227,21 +231,21 @@ public class MembersFragment extends Fragment{
 
                                             myMember = members.getID();
 
-                                            if(ID.equals(myMember))
-                                            {
-                                                Toast.makeText(getContext(),"Member ID already existed", Toast.LENGTH_SHORT).show();
-                                                popupWindow.dismiss();
-                                            }
+                                        }
 
-                                            else
-                                            {
-                                                Members member = new Members(ID, Name);
+                                        if(ID.equals(myMember))
+                                        {
+                                            Toast.makeText(getContext(),"Member ID already existed", Toast.LENGTH_SHORT).show();
+                                            popupWindow.dismiss();
+                                        }
 
-                                                databaseReference.child(key).setValue(member);
+                                        else
+                                        {
+                                            Members member = new Members(ID, Name);
 
-                                                Toast.makeText(getContext(),ID + "" + myMember, Toast.LENGTH_SHORT).show();
-                                                popupWindow.dismiss();
-                                            }
+                                            databaseReference.child(key).setValue(member);
+
+                                            popupWindow.dismiss();
                                         }
                                     }
 
@@ -250,6 +254,8 @@ public class MembersFragment extends Fragment{
 
                                     }
                                 });
+
+
                             }
                         }
                     });

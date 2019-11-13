@@ -270,11 +270,11 @@ public class OrdersFragment extends Fragment {
                     orderIDArrayList.add(reportOrderArrayList.get(i).getOrder_id());
                     if(reportOrderArrayList.get(i).getIsMember().equals(true)){
                         memberArrayList.add(true);
-                        salesArrayList.add(String.valueOf(reportOrderArrayList.get(i).getOrder_total() * 0.9));
+                        salesArrayList.add(String.format("%.2f",reportOrderArrayList.get(i).getOrder_total() * 0.9));
                     }
                     else{
                         memberArrayList.add(false);
-                        salesArrayList.add(String.valueOf(reportOrderArrayList.get(i).getOrder_total()));
+                        salesArrayList.add(String.format("%.2f",reportOrderArrayList.get(i).getOrder_total()));
                     }
                     orderStatusArray.add(reportOrderArrayList.get(i).getOrder_status());
             }

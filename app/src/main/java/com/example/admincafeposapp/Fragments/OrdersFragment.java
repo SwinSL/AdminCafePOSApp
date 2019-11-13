@@ -234,6 +234,10 @@ public class OrdersFragment extends Fragment {
                                                         orderCollectionRef.document(document.getId()).delete();
                                                         Toast.makeText(getContext(),transactionRemove + " deleted", Toast.LENGTH_SHORT).show();
                                                     }
+                                                    else
+                                                    {
+                                                        Toast.makeText(getContext(),"PLEASE ENTER A EXISTED TRANSACTION ID", Toast.LENGTH_SHORT).show();
+                                                    }
                                                 }
                                                 getOrders();
                                             }

@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.admincafeposapp.Model.Beverages;
-import com.example.admincafeposapp.Model.BeveragesListAdapter;
+import com.example.admincafeposapp.Adapters.BeveragesListAdapter;
 import com.example.admincafeposapp.Model.Food;
-import com.example.admincafeposapp.Model.FoodListAdapter;
+import com.example.admincafeposapp.Adapters.FoodListAdapter;
 import com.example.admincafeposapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -108,7 +108,7 @@ public class MenuFragment extends Fragment{
 
     }
 
-    public void readFoodBeveragesFromDatabase()
+    private void readFoodBeveragesFromDatabase()
     {
         foodList.clear();
         firestore.collection("Food").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -141,7 +141,7 @@ public class MenuFragment extends Fragment{
         });
     }
 
-    public void PopupAddFood()
+    private void PopupAddFood()
     {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.add_food_popup, null);
         final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);
@@ -181,7 +181,7 @@ public class MenuFragment extends Fragment{
         return !(editAddFoodName.getText().toString().isEmpty() || editAddFoodPrice.getText().toString().isEmpty());
     }
 
-    public void PopupAddBeverages()
+    private void PopupAddBeverages()
     {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.add_beverages_popup, null);
         final PopupWindow popupWindow = new PopupWindow(view, 400, WindowManager.LayoutParams.WRAP_CONTENT);

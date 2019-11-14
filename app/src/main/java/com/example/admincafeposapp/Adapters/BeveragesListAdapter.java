@@ -1,4 +1,4 @@
-package com.example.admincafeposapp.Model;
+package com.example.admincafeposapp.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.admincafeposapp.Model.Beverages;
 import com.example.admincafeposapp.R;
 
 import java.util.List;
@@ -39,13 +39,13 @@ public class BeveragesListAdapter extends RecyclerView.Adapter<BeveragesListAdap
         return beveragesList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
 
         View bView;
 
-        public TextView nameText, priceText;
+        TextView nameText, priceText;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             bView = itemView;
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tool="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,9 +9,11 @@
     android:id="@+id/transactionsTitle"
     android:layout_width="904dp"
     android:layout_height="wrap_content"
-    android:text="TRANSACTIONS"
-    android:textSize="40sp"
-    android:padding="5dp"
+    android:text="@string/transactions_2"
+    android:textSize="35sp"
+    android:textStyle="bold"
+    android:fontFamily="@font/raleway"
+    android:padding="10dp"
     android:textAlignment="center"
     android:textColor="@android:color/black"
     app:layout_constraintTop_toTopOf="parent"
@@ -23,7 +24,7 @@
     android:id="@+id/transactionstitlelinetop"
     android:layout_width="904dp"
     android:layout_height="1dp"
-    android:background="@android:color/black"
+    android:background="#d3d3d3"
     app:layout_constraintTop_toBottomOf="@id/transactionsTitle"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"/>
@@ -40,51 +41,57 @@
         android:id="@+id/transactionstitleline1"
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="#d3d3d3" />
     <TextView
         android:id="@+id/transactionsIdTitle"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="ORDER ID"
+        android:text="@string/order_id_2"
         android:textSize="25sp"
+        android:textStyle="bold"
         android:textAlignment="center"
+        android:fontFamily="@font/raleway"
         android:textColor="@android:color/black" />
 
     <View
         android:id="@+id/transactionstitleline"
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="#d3d3d3" />
 
     <TextView
         android:id="@+id/transactionsTableNoTitle"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="TABLE NO"
+        android:text="@string/table_no_2"
         android:textSize="25sp"
+        android:textStyle="bold"
         android:textAlignment="center"
+        android:fontFamily="@font/raleway"
         android:textColor="@android:color/black"/>
 
     <View
         android:id="@+id/transactionstitleline3"
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="#d3d3d3" />
 
     <TextView
         android:id="@+id/transactionsStatusTitle"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="STATUS"
+        android:text="@string/status_2"
         android:textSize="25sp"
         android:textAlignment="center"
+        android:textStyle="bold"
+        android:fontFamily="@font/raleway"
         android:textColor="@android:color/black"/>
 
     <View
         android:id="@+id/transactionstitleline4"
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="#d3d3d3" />
 
 </LinearLayout>
 
@@ -101,7 +108,7 @@
         android:id="@+id/transactiondeleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="REMOVE TRANSACTION"
+        android:text="@string/remove_transaction"
         android:layout_marginStart="250dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -112,7 +119,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:fontFamily="@font/raleway"
-        android:hint="Select Date:"
+        android:hint="@string/select_date"
         android:drawableEnd="@drawable/calendar_icon"
         app:layout_constraintTop_toTopOf="@id/print_btn"
         app:layout_constraintBottom_toBottomOf="@id/print_btn"
@@ -122,7 +129,7 @@
     android:id="@+id/print_btn"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Print"
+    android:text="@string/print"
     android:layout_marginEnd="250dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"/>

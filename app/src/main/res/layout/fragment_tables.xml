@@ -10,10 +10,12 @@
         android:id="@+id/tableTitle"
         android:layout_width="904dp"
         android:layout_height="wrap_content"
-        android:text="TABLES"
-        android:textSize="40sp"
-        android:padding="5dp"
+        android:text="@string/tables_title"
+        android:textSize="35sp"
+        android:padding="10dp"
         android:textAlignment="center"
+        android:textStyle="bold"
+        android:fontFamily="@font/raleway"
         android:textColor="@android:color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -23,7 +25,7 @@
         android:id="@+id/tabletitlelinetop"
         android:layout_width="904dp"
         android:layout_height="1dp"
-        android:background="@android:color/black"
+        android:background="#d3d3d3"
         app:layout_constraintTop_toBottomOf="@id/tableTitle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -40,51 +42,57 @@
             android:id="@+id/tabletitleline1"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@android:color/black" />
+            android:background="#d3d3d3" />
         <TextView
             android:id="@+id/tableNoTitle"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="TABLE NUMBER"
+            android:text="@string/table_no_2"
             android:textSize="25sp"
             android:textAlignment="center"
+            android:fontFamily="@font/raleway"
+            android:textStyle="bold"
             android:textColor="@android:color/black" />
 
         <View
             android:id="@+id/tabletitleline"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@android:color/black" />
+            android:background="#d3d3d3" />
 
         <TextView
             android:id="@+id/tableNoOfSeatsTitle"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="NUMBER OF SEATS"
+            android:text="@string/no_of_seats"
             android:textSize="25sp"
             android:textAlignment="center"
+            android:textStyle="bold"
+            android:fontFamily="@font/raleway"
             android:textColor="@android:color/black"/>
 
         <View
             android:id="@+id/tabletitleline3"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@android:color/black" />
+            android:background="#d3d3d3" />
 
         <TextView
             android:id="@+id/tableStatusTitle"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="TABLE STATUS"
+            android:text="@string/status"
             android:textSize="25sp"
             android:textAlignment="center"
+            android:fontFamily="@font/raleway"
+            android:textStyle="bold"
             android:textColor="@android:color/black"/>
 
         <View
             android:id="@+id/tabletitleline4"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@android:color/black" />
+            android:background="#d3d3d3" />
 
     </LinearLayout>
 
@@ -109,7 +117,7 @@
             android:id="@+id/button_removeTable"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:text="REMOVE TABLE"
+            android:text="@string/remove_table"
             android:layout_marginStart="100dp"
             android:layout_alignParentStart="true"
             />
@@ -118,7 +126,7 @@
             android:id="@+id/button_addTable"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:text="ADD TABLE"
+            android:text="@string/add_table"
             android:layout_marginEnd="100dp"
             android:layout_alignParentEnd="true"
             />

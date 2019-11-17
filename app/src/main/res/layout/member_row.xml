@@ -14,20 +14,20 @@ android:layout_height="wrap_content">
         android:layout_width="301dp"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
-        android:textSize="25sp"
+        android:textSize="24sp"
         android:textAlignment="center"/>
 
     <View
         android:id="@+id/MHorizontalLine"
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black"/>
+        android:background="#d3d3d3"/>
 
     <TextView
         android:id="@+id/textView_memberNameData"
         android:layout_width="500dp"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
+        android:textSize="24sp"
         android:textColor="@android:color/black"
         android:textAlignment="center"
         android:fontFamily="@font/raleway"/>
@@ -37,6 +37,6 @@ android:layout_height="wrap_content">
         android:id="@+id/MMHorizontalLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/black"/>
+        android:background="#d3d3d3"/>
 
 </LinearLayout>

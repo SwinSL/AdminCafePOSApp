@@ -46,6 +46,28 @@
     <string name="time_upper">TIME</string>
     <string name="_1_2_3_etc">1, 2, 3, etc</string>
     <string name="table_no_upper">TABLE NO.</string>
+    <string name="date_2">Date</string>
+    <string name="time_2">Time</string>
+    <string name="table_no_2">Table No.</string>
+    <string name="no_of_seats">No. of Seats</string>
+    <string name="status">Status</string>
+    <string name="reservation_id_2">Reservation ID</string>
+    <string name="no_of_people_2">No. of People</string>
+    <string name="surname_2">Surname</string>
+    <string name="members_2">Members</string>
+    <string name="member_id_2">Member ID</string>
+    <string name="member_name_2">Member Name</string>
+    <string name="name_2">Name</string>
+    <string name="price_rm">Price(RM)</string>
+    <string name="beverages_2">Beverages</string>
+    <string name="food_2">Food</string>
+    <string name="reservations_2">Reservations</string>
+    <string name="transactions_2">Transactions</string>
+    <string name="order_id_2">Order ID</string>
+    <string name="status_2">Status</string>
+    <string name="remove_transaction">REMOVE TRANSACTION</string>
+    <string name="select_date">Select Date:</string>
+    <string name="print">Print</string>
 
     <string-array name="table_status">
         <item>Available</item>

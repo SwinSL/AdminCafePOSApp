@@ -199,6 +199,7 @@ public class MembersFragment extends Fragment{
                     btn_confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+
                             memID = container.findViewById(R.id.et_id);
                             memName = container.findViewById(R.id.et_name);
 
@@ -266,51 +267,65 @@ public class MembersFragment extends Fragment{
                     btn_confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            memID = container.findViewById(R.id.et_id);
-                            memName = container.findViewById(R.id.et_name);
 
-                            final String ID = memID.getText().toString();
-                            final String Name = memName.getText().toString();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-                            if(TextUtils.isEmpty(ID))
-                            {
-                                Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
+                            builder.setTitle("Remove Member")
+                                    .setMessage("Are you sure you want remove this member?")
+                                    .setNegativeButton("No", null)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            memID = container.findViewById(R.id.et_id);
+                                            memName = container.findViewById(R.id.et_name);
 
-                            else if(TextUtils.isEmpty(Name))
-                            {
-                                Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
+                                            final String ID = memID.getText().toString();
+                                            final String Name = memName.getText().toString();
 
-                            final Query query = databaseReference.orderByChild("id").equalTo(ID);
+                                            if(TextUtils.isEmpty(ID))
+                                            {
+                                                Toast.makeText(getContext(),"ID is empty", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
 
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
-                                    {
-                                        Members test = dataSnapshot1.getValue(Members.class);
+                                            else if(TextUtils.isEmpty(Name))
+                                            {
+                                                Toast.makeText(getContext(),"Name is empty", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
 
-                                        if(Name.equals(test.getName()))
-                                        {
-                                            dataSnapshot1.getRef().removeValue();
-                                            Toast.makeText(getContext(),"Successfully delete member",Toast.LENGTH_LONG).show();
-                                            popupWindow.dismiss();
+                                            final Query query = databaseReference.orderByChild("id").equalTo(ID);
+
+                                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren())
+                                                    {
+                                                        Members test = dataSnapshot1.getValue(Members.class);
+
+                                                        if(Name.equals(test.getName()))
+                                                        {
+                                                            dataSnapshot1.getRef().removeValue();
+                                                            Toast.makeText(getContext(),"Successfully delete member",Toast.LENGTH_LONG).show();
+                                                            popupWindow.dismiss();
+                                                        }
+
+                                                        else
+                                                        {
+                                                            Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                }
+                                            });
+
                                         }
+                                    });
+                            builder.show();
 
-                                        else
-                                        {
-                                            Toast.makeText(getContext(),"Wrong info",Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                }
-                            });
 
                         }
                     });
